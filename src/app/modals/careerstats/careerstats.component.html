@@ -1,0 +1,71 @@
+<ion-content>
+  <ion-row id="menu-bar">
+    <ion-col id="menu-icon">
+    </ion-col>
+    <ion-col>
+      <h1 id="title">Sqram</h1>
+    </ion-col>
+    <ion-col id="heart-icon">
+    </ion-col>
+  </ion-row>
+  <div id="game-screen">
+    <span id="title-two">Career Stats</span>
+    <div id="stats-box">
+      <ion-row>
+        <ion-col id="stat">
+          <span class="number">{{gameResults.stats.tens || 0}}</span><br>
+          <span class="label">Tens</span>
+        </ion-col>
+        <ion-col id="stat">
+          <span class="number">{{gameResults.stats.completionRate || 0 | number:'1.1-1'}}%</span><br>
+          <span class="label">Completion Rate</span>
+        </ion-col>
+        <ion-col id="stat">
+          <span class="number">{{gameResults.stats.timeToComplete || 0 | number:'1.1-1'}}s</span><br>
+          <span class="label">Time to Complete</span>
+        </ion-col>
+        <ion-col id="stat">
+          <span class="number">{{gameResults.stats.perfects || 0}}</span><br>
+          <span class="label">Perfects</span>
+        </ion-col>
+        <ion-col id="stat">
+          <span class="number">{{gameResults.stats.perfectStreaks || 0}}</span><br>
+          <span class="label">Perfect Streak</span>
+        </ion-col>
+      </ion-row>
+    </div>
+    <div id="stats-break">
+      <!--<ion-row>
+        <ion-col>Word Solve Rate</ion-col>
+        <ion-col>{{gameResults.stats.wordSolveRate || 0}}%</ion-col>
+      </ion-row>-->
+       <ion-row>
+        <ion-col>Games Played</ion-col>
+        <ion-col>{{gameResults.timesPlayed || 0}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Solve per Word</ion-col>
+        <ion-col>{{gameResults.stats.timePerWord || 0 | number:'1.1-1'}}s</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Hints per Game</ion-col>
+        <ion-col>{{((gameResults.hintsUsed / gameResults.timesPlayed).toFixed(1)) || 0 | number:'1.1-1'}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Skips per Game</ion-col>
+        <ion-col>{{((gameResults.skipsUsed / gameResults.timesPlayed).toFixed(1)) || 0 | number:'1.1-1'}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Max Perfect Streak</ion-col>
+        <ion-col>{{gameResults.stats.maxPerfectStreaks || 0}}</ion-col>
+      </ion-row>
+    </div>
+  </div>
+  <div id="next-game">
+    <h2>Next Sqram</h2>
+    <div>{{timeUntil}}</div>
+  </div>
+  <div id="close">
+    <ion-button color="dark" (click)="close()">Close</ion-button>
+  </div>
+</ion-content>

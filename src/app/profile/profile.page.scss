@@ -1,0 +1,55 @@
+@media (max-width: 500px) {
+  #game-board {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 501px) {
+  #game-board {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 500px;
+    margin: auto;
+  }
+}
+
+#title {
+  font-family: Marker Felt, fantasy;
+  font-size: 50px;
+  text-shadow: 0px 7px 10px #bababa;
+  color: #004b4d;
+  padding-bottom: 15px;
+  margin-left: 15px;
+}
+
+#menu-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+
+  #heart-icon {
+    display: flex;
+    flex-direction: row;
+    font-size: 35px;
+    justify-content: space-around;
+  }
+
+  #donate-icon:hover,  #flag-icon:hover, #career-icon:hover, #menu-icon:hover {
+    transform: scale(1.1);
+  }
+
+  #menu-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 35px;
+  }
+}
+
+ion-card {
+  width: 100%;
+}

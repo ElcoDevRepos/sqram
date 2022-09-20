@@ -1,0 +1,13 @@
+<ion-menu side="start" menuId="menu" contentId="main">
+  <ion-content>
+    <ion-list style="margin-top: 125px;" lines="none">
+      <ion-item (click)="menu.close()" [routerLink]="['home']">Home</ion-item>
+      <ion-item (click)="menu.close()" [routerLink]="['profile']" *ngIf="authenticated">My Profile</ion-item>
+      <ion-item (click)="menu.close()" [routerLink]="['leaderboard']" *ngIf="authenticated">Leaderboard</ion-item>
+      <ion-item (click)="claim()" *ngIf="!authenticated" detail button>Claim Account</ion-item>
+      <ion-item (click)="login()" *ngIf="!authenticated" detail button>Login</ion-item>
+      <ion-item (click)="logout()" *ngIf="authenticated" detail button>Logout</ion-item>
+    </ion-list>
+
+  </ion-content>
+</ion-menu>

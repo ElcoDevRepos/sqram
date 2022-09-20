@@ -1,0 +1,73 @@
+<ion-content>
+  <ion-card *ngIf="!loggedIn" class="login-card">
+    <ion-card-header>
+      <ion-card-subtitle>
+        Login
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label position="floating">Username</ion-label>
+          <ion-input [(ngModel)]="username" type="email"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Password</ion-label>
+          <ion-input [(ngModel)]="password" type="password"></ion-input>
+        </ion-item>
+        <div class="login-btn">
+          <ion-button (click)="login()">Login</ion-button>
+        </div>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="words-container">
+    <ion-card *ngIf="loggedIn" class="picker-card">
+      <ion-card-header>
+        <ion-card-subtitle>
+          Add Some Words
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-datetime presentation="date" [(ngModel)]="chosenDate" class="datepicker" (ionChange)="dateChanged()">
+        </ion-datetime>
+        <ion-item>
+          <ion-label position="floating">Word</ion-label>
+          <ion-input [(ngModel)]="word" type="text" maxlength="7"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Hint</ion-label>
+          <ion-input [(ngModel)]="hint" type="text" maxlength="25"></ion-input>
+        </ion-item>
+        <div class="login-btn">
+          <ion-button (click)="submit()">Submit</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="loggedIn" class="word-card">
+      <ion-card-header>
+        <ion-card-subtitle>
+          Chosen Days Words
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-reorder-group disabled="false" (ionItemReorder)="doReorder($event)">
+          <ion-item *ngFor="let word of words; let i = index">
+            <ion-label>
+              <h3>Word: {{word.text}}</h3>
+              <p>Hint: {{word.hint}}</p>
+              <div clas="icon-row">
+                <ion-icon slot="icon-only" color="danger" name="trash" (click)="delete(i)"></ion-icon>
+                <ion-icon slot="icon-only" name="pencil" (click)="edit(i)" style="margin-left: 15px"></ion-icon>
+              </div>
+            </ion-label>
+            <ion-reorder slot="end"></ion-reorder>
+          </ion-item>
+        </ion-reorder-group>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+</ion-content>

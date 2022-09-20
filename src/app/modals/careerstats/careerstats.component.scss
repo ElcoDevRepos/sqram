@@ -1,0 +1,77 @@
+#menu-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+
+    #heart-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-size: 35px;
+    }
+
+    #menu-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 35px;
+    }
+}
+
+#title {
+    font-family: Marker Felt, fantasy;
+    font-size: 50px;
+    text-shadow: 0px 7px 10px #bababa;
+    color: #004b4d;
+    padding-bottom: 15px;
+}
+
+#title-two {
+    font-size: 40px;
+    padding-bottom: 15px;
+}
+
+#game-screen {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  #stats-box {
+      border: 1px solid black;
+      margin-left: 10px;
+      margin-right: 10px;
+      #stat {
+        text-align: center;
+        .number {
+            font-size: 30px;
+            font-weight: bold;
+        }
+      }
+  }
+
+  #stats-break {
+    width: 100%;
+    text-align: center;
+    margin-top: 50px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  #next-game {
+      margin-top: 25px;
+    text-align: center;
+    div {
+      font-size: 25px;
+    }
+  }
+
+  #close {
+      text-align: center;
+      ion-button {
+        width: 50px;
+        height: 50px;
+        --color: black;
+      }
+  }

@@ -1,0 +1,54 @@
+.login-card {
+    display: block;
+    margin: auto;
+    width: 50%;
+    margin-top: 125px;
+}
+
+
+
+
+.login-btn {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.datepicker {
+    margin:auto;
+    border: none;
+    width: 100%;
+    background-color: white;
+    color: black;
+    background: white;
+}
+
+@media (max-width: 900px) {
+    .words-container {
+     display: flex;
+        flex-direction: column;
+    }
+    .word-card, .picker-card {
+        display: block;
+        margin: auto;
+        width: 75%;
+        margin-top: 25px;
+    }
+}
+@media (min-width: 901px) {
+    .words-container {
+     display: flex;
+        flex-direction: row;
+    }
+    .word-card, .picker-card {
+        display: block;
+        margin: auto;
+        width: 45%;
+        margin-top: 25px;
+    }
+}
+ion-icon {
+    cursor: pointer;
+    font-size: 20px;
+}
+  

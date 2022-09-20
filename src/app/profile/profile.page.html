@@ -1,0 +1,46 @@
+
+<ion-content>
+  <div id="game-board">
+    <ion-row id="menu-bar">
+      <ion-col id="menu-icon" size="1">
+        <ion-icon name="menu" (click)="openMenu()"></ion-icon>
+      </ion-col>
+      <ion-col size="6">
+        <h1 id="title">Sqram</h1>
+      </ion-col>
+      <ion-col id="heart-icon" size="4">
+
+        <ion-icon name="flag" (click)="goToLeaderboard()" id="career-icon"></ion-icon>
+
+        <ion-icon name="home"  (click)="goHome()" id="flag-icon"></ion-icon>
+
+        <ion-icon name="heart" style='color: red' (click)='openDonate()' id="donate-icon"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{displayName}}</ion-card-title>
+        <ion-card-subtitle>Profile Settings</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item button detail (click)="updateName()">Update Profile Name</ion-item>
+          <ion-item button detail (click)="addFriend()">Add a Friend</ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>Friends List</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item *ngFor="let f of friends" button detail (click)="remove(f)">
+            {{f.name}}
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

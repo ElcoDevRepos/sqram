@@ -1,0 +1,105 @@
+<ion-content>
+  <div id="game-board">
+    <ion-row id="menu-bar">
+      <ion-col id="menu-icon" size="1">
+        <ion-icon name="menu" (click)="openMenu()"></ion-icon>
+      </ion-col>
+      <ion-col size="6">
+        <h1 id="title">Sqram</h1>
+      </ion-col>
+      <ion-col id="heart-icon" size="4">
+        <ion-icon name="home"  (click)="goHome()" id="flag-icon"></ion-icon>
+
+        <ion-icon name="heart" style='color: red' (click)='openDonate()' id="donate-icon"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <!--
+    <ion-segment (ionChange)="segmentChanged($event)" [value]="boardType" style="width: 80%">
+      <ion-segment-button value="friends">
+        <ion-label>Friends</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="worldwide">
+        <ion-label>Worldwide</ion-label>
+      </ion-segment-button>
+    </ion-segment>-->
+    <div>
+      <ion-button [ngClass]="{'active': activeBoard === 'perfects', 'inactive': activeBoard !== 'perfects'}"
+        (click)="switchBoard('perfects')">
+        <ion-icon name="star"></ion-icon>
+      </ion-button>
+      <ion-button [ngClass]="{'active': activeBoard === 'tens', 'inactive': activeBoard !== 'tens'}"
+        (click)="switchBoard('tens')">
+        10
+      </ion-button>
+    </div>
+    <ion-card id="leaderboard-container" *ngIf="activeBoard === 'perfects'" style="width: 95%">
+      <ion-row>
+        <ion-col size="2">
+          RANK
+        </ion-col>
+        <ion-col size="4">
+          PLAYER
+        </ion-col>
+        <ion-col size="3">
+          PERFECTS
+        </ion-col>
+        <ion-col size="3">
+          PERFECT RATE
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let player of friends; let i = index" [ngClass]="{'isYou': player.uid === auth.currentUser.uid}">
+        <ion-col size="2">
+          {{i + 1}}
+        </ion-col>
+        <ion-col size="4">
+          {{player.name}}
+        </ion-col>
+        <ion-col size="3">
+          {{player.stats.perfects || 0}}
+        </ion-col>
+        <ion-col size="3">
+          {{((player.stats.perfects) / (player.timesPlayed)) * 100|| 0 | number:'1.1-1'}}%
+        </ion-col>
+      </ion-row>
+    </ion-card>
+    <ion-card id="leaderboard-container" *ngIf="activeBoard === 'tens'" style="width: 95%">
+      <ion-row>
+        <ion-col>
+          RANK
+        </ion-col>
+        <ion-col>
+          PLAYER
+        </ion-col>
+        <ion-col>
+          TENS
+        </ion-col>
+        <ion-col>
+          COMPLETION RATE
+        </ion-col>
+        <ion-col>
+          TTC
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let player of friends; let i = index" [ngClass]="{'isYou': player.uid === auth.currentUser.uid}">
+        <ion-col>
+          {{i + 1}}
+        </ion-col>
+        <ion-col style="white-space: nowrap;
+       overflow: hidden;
+       text-overflow: ellipsis;">
+          {{player.name || 0}}
+        </ion-col>
+        <ion-col>
+          {{player.stats.tens || 0 }}
+        </ion-col>
+        <ion-col>
+          {{player.stats.completionRate || 0 | number:'1.1-1'}}%
+        </ion-col>
+        <ion-col>
+          {{player.stats.timeToComplete || 0 | number:'1.1-1'}}s
+        </ion-col>
+      </ion-row>
+    </ion-card>
+    <ion-button color="dark" (click)="addFriend()" class="btn">Add Friend</ion-button>
+  </div>
+</ion-content>
