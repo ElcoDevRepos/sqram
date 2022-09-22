@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Auth, signOut, EmailAuthProvider, linkWithCredential, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, signOut, EmailAuthProvider, linkWithCredential, signInWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
 import { AlertController, MenuController } from '@ionic/angular';
 
 @Component({
@@ -21,15 +21,17 @@ export class MenuComponent implements OnInit {
 
   async claim() {
     const alertPopup = await this.alertCtrl.create({
-      header: 'Please enter your info',
+      header: 'Please enter your new account info',
       buttons: [
         {
           text: 'OK',
           handler: (d) => {
             const credential = EmailAuthProvider.credential(d[0], d[1]);
             linkWithCredential(this.auth.currentUser, credential)
-              .then((usercred) => {
+              .then(async (usercred) => {
                 this.authenticated = this.auth.currentUser.email !== null;
+                await updateProfile(usercred.user, {displayName: d[2]});
+                window.location.reload();
               }).catch((error) => {
                 alert("Account linking error: " + error);
               });
@@ -44,6 +46,10 @@ export class MenuComponent implements OnInit {
         {
           type: 'password',
           placeholder: 'password',
+        },
+        {
+          type: 'text',
+          placeholder: 'username',
         },
       ],
     });

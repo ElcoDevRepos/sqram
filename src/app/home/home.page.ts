@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild, ɵɵsetComponentScope } from '@angular/core';
-import { AlertController, MenuController, ModalController } from '@ionic/angular';
+import { AlertController, MenuController, ModalController, Platform } from '@ionic/angular';
 import { Word } from '../classes/word';
 import { Preferences } from '@capacitor/preferences';
 import * as dayjs from 'dayjs';
@@ -15,6 +15,8 @@ import { Careerstats } from '../classes/careerstats';
 import { Router } from '@angular/router';
 import { Animation, AnimationController } from '@ionic/angular';
 import { ScrambleWordLetterComponent } from '../components/scramble-word-letter/scramble-word-letter.component';
+import { Clipboard } from '@capacitor/clipboard';
+import { updateProfile } from '@firebase/auth';
 
 dayjs.extend(utc);
 @Component({
@@ -57,7 +59,7 @@ export class HomePage {
   stashLockedIndexes = [];
   started: boolean = false;
   ended: boolean = false;
-  today: string = dayjs().format("MM.DD.YY");
+  today: string = dayjs().utc().format("MM.DD.YY");
   doDaysMatch: boolean;
   serverDate: string;
   emojiNumberArray: Array<string> = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
@@ -75,7 +77,7 @@ export class HomePage {
   letterRowComponents: Array<ScrambleWordLetterComponent> = [];
   hintUsedOnLastLetter = false;
   constructor(private alertCtrl: AlertController, private firestore: Firestore, private auth: Auth, private modalCtrl: ModalController, private menu: MenuController,
-    private router: Router
+    private router: Router, private platform: Platform
   ) {
 
   }
@@ -111,8 +113,7 @@ export class HomePage {
     }
     this.serverDate = new Date(serverDay).toUTCString();
     let today = new Date().toUTCString();
-
-    this.doDaysMatch = dayjs(today).isSame(serverDay, 'day');
+    this.doDaysMatch = dayjs(today).utc().isSame(serverDay, 'day');
   }
   async setupUser() {
     let dbUser = await getDoc(doc(this.firestore, "users", this.auth.currentUser.uid));
@@ -157,7 +158,7 @@ export class HomePage {
       this.firestore,
       'words',
     );
-    let q = query(ref, where("date", '==', dayjs().format('MM/DD/YY')));
+    let q = query(ref, where("date", '==', dayjs().utc().format('MM/DD/YY')));
     const docs = await getDocs(q);
     let words = [];
     docs.forEach((d) => {
@@ -216,8 +217,8 @@ export class HomePage {
     // Have they played before?
     if (this.gameResults.lastPlayed) {
       // They have played before, was it today?
-      const lastPlayed = dayjs(this.gameResults.lastPlayed)
-      if (dayjs().isSame(lastPlayed, 'day')) {
+      const lastPlayed = dayjs(this.gameResults.lastPlayed).utc();
+      if (dayjs().utc().isSame(lastPlayed, 'day')) {
         // They played today.
         // Is it an active game or ended game?
         if (this.gameResults.active) {
@@ -700,7 +701,7 @@ export class HomePage {
     this.solvedWords.forEach((w) => {
       if (w || w === 0) solved += 1;
     })
-    text = "Sqram " + dayjs().format("MM.DD.YY") + " " + solved + "/" + this.words.length + "\n\n";
+    text = "Sqram " + dayjs().utc().format("MM.DD.YY") + " " + solved + "/" + this.words.length + "\n\n";
     index = 0;
     for (let i = 0; i < this.words.length; i++) {
       let s = this.secondsPerWord[i];
@@ -740,7 +741,14 @@ export class HomePage {
 
 
     text += "\nhttps://sqram.com/"
-    console.log(text);
+
+    if (!this.platform.is('ios') && !this.platform.is('android')) {
+      await Clipboard.write({
+        string: text
+      });
+
+      alert("Copied to Clipboard")
+    }
     await Share.share({
       title: 'Share your results with your friends!',
       text: text,
@@ -806,9 +814,12 @@ export class HomePage {
         if (this.finalWord.includes(l) && this.isLocked(index)) this.letterArray.splice(index, 1, '');
         index++;
       })
-      for (let i = 0; i < this.finalWord.length; i++) {
-        if (!this.isLocked(i)) this.finalWord[i] = '';
+      if (!skipSet) {
+        for (let i = 0; i < this.finalWord.length; i++) {
+          if (!this.isLocked(i)) this.finalWord[i] = '';
+        }
       }
+      
     }
     this.letterArray.sort(() => Math.random() - 0.5);
 
@@ -933,8 +944,8 @@ export class HomePage {
 
   haventPlayedToday() {
     if (this.gameResults.lastPlayed && this.doDaysMatch) {
-      const lastPlayed = dayjs(this.gameResults.lastPlayed);
-      return dayjs(this.serverDate).get('D') === dayjs(lastPlayed).get('D')
+      const lastPlayed = dayjs(this.gameResults.lastPlayed).utc();
+      return dayjs(this.serverDate).utc().get('D') === dayjs(lastPlayed).utc().get('D')
     }
 
     if (this.doDaysMatch) {
@@ -945,7 +956,7 @@ export class HomePage {
   }
 
   countdown() {
-    let tomorrow = dayjs(this.serverDate).add(1, 'day').format();
+    let tomorrow = dayjs(this.serverDate).utc().add(1, 'day').format();
     var countDownDate = new Date(tomorrow).getTime();
 
     // Update the count down every 1 second
@@ -972,6 +983,7 @@ export class HomePage {
       if (distance < 0) {
         clearInterval(x);
         this.timeUntil = "00:00:00";
+        window.location.reload();
       }
     }.bind(this), 1000);
   }
@@ -1052,7 +1064,9 @@ export class HomePage {
           handler: (d) => {
             const credential = EmailAuthProvider.credential(d[0], d[1]);
             linkWithCredential(this.auth.currentUser, credential)
-              .then((usercred) => {
+              .then(async (usercred) => {
+                await updateProfile(usercred.user, {displayName: d[2]});
+                window.location.reload();
               }).catch((error) => {
                 alert("Account linking error: " + error);
               });
@@ -1067,6 +1081,10 @@ export class HomePage {
         {
           type: 'password',
           placeholder: 'password',
+        },
+        {
+          type: 'text',
+          placeholder: 'username',
         },
       ],
     });
@@ -1117,8 +1135,8 @@ export class HomePage {
   }
 
   isStateToday() {
-    let today = dayjs();
-    let timestamp = dayjs(this.timestamp);
+    let today = dayjs().utc();
+    let timestamp = dayjs(this.timestamp).utc();
 
     return today.isSame(timestamp, 'day');
   }
