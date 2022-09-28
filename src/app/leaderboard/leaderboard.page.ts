@@ -3,7 +3,7 @@ import { Auth } from '@angular/fire/auth';
 import { getDoc, doc, Firestore, collection, getDocs, addDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { query, where } from '@firebase/firestore';
-import { AlertController, MenuController } from '@ionic/angular';
+import { AlertController, MenuController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-leaderboard',
@@ -15,7 +15,7 @@ export class LeaderboardPage implements OnInit {
   activeBoard: string = "perfects";
   boardType: string = "friends";
   constructor(public auth: Auth, private firestore: Firestore, private menu: MenuController, private alertCtrl: AlertController,
-    private router: Router) { }
+    private router: Router, private toastCtrl: ToastController) { }
 
   ngOnInit() {
     this.auth.onAuthStateChanged(async (a) => {
@@ -69,9 +69,10 @@ export class LeaderboardPage implements OnInit {
       this.friends.push(userDoc.data());
     }
 
-    const r_sort = (a, b, field, asc) => {
+    const r_sort = (a, b, field, tieBreaker, asc) => {
       let reverse = asc ? 1 : -1;
       let fields = field.split(".");
+      let tieBreakerFields = tieBreaker.split(".");
       if (a[fields[0]][fields[1]] > b[fields[0]][fields[1]]) {
           return 1 * reverse;
       }
@@ -79,13 +80,25 @@ export class LeaderboardPage implements OnInit {
           return -1 * reverse;
       }
       else {
-          return 0;
+        if (a[tieBreakerFields[0]][tieBreakerFields[1]] > b[tieBreakerFields[0]][tieBreakerFields[1]]) {
+          return 1 * -reverse;
+        }
+        else if (b[tieBreakerFields[0]][tieBreakerFields[1]] > a[tieBreakerFields[0]][tieBreakerFields[1]]) {
+            return -1 * -reverse;
+        }
+        else {
+            return 0;
+        }
       } }
 
+    for (let i = 0; i < this.friends.length; i++) {
+      this.friends[i].stats.perfectRate = ((this.friends[i].stats.perfects) / (this.friends[i].timesPlayed)) * 100 || 0;
+    }
+
     if (this.activeBoard === 'perfects') {
-      this.friends.sort((a,b)=> r_sort(a, b, 'stats.perfects', false));
+      this.friends.sort((a,b)=> r_sort(a, b, 'stats.perfectRate', "stats.completionRate", false));
     } else {
-      this.friends.sort((a,b)=> r_sort(a, b, 'stats.completionRate', false));
+      this.friends.sort((a,b)=> r_sort(a, b, 'stats.completionRate', "stats.timeToComplete", false));
     }
   }
 
@@ -108,20 +121,20 @@ export class LeaderboardPage implements OnInit {
 
   async addFriend() {
     const alertPopup = await this.alertCtrl.create({
-      header: 'Enter a friend\'s name',
+      header: 'Enter a Friend\'s Name',
       buttons: [
         {
           text: 'OK',
           handler: async (d) => {
             let name = d[0];
             if (name === this.auth.currentUser.displayName) {
-              alert("Don't enter you're own name!");
+              this.showToast("Don't enter you're own name!");
               return;
             }
             name = name.toLowerCase();
             let docs = await getDocs(query(collection(this.firestore, 'users', this.auth.currentUser.uid, 'friends'), where('name', '==', name)));
             if (!docs.empty) {
-              alert("Friend Already Added!");
+              this.showToast("Friend Already Added!");
               return;
             }
             const responsesRef = collection(
@@ -130,11 +143,15 @@ export class LeaderboardPage implements OnInit {
             );
             const q = query(responsesRef, where('name', '==', name));
             getDocs(q).then((docs) => {
+              if (docs.empty) {
+                this.showToast("Friend Does Not Exist");
+                return;
+              }
               docs.forEach((d) => {
                 addDoc(collection(this.firestore, 'users', this.auth.currentUser.uid, 'friends'), {
                   uid: d.id,
                   name: d.data().name,
-                }).then(() => {alert("Friend Added");  this.getFriends()})
+                }).then(() => {this.showToast("Friend Added");  this.getFriends()})
               })
             })
 
@@ -145,11 +162,23 @@ export class LeaderboardPage implements OnInit {
       inputs: [
         {
           type: 'text',
+          attributes: {
+            maxlength: 10,
+          },
         },
       ],
     });
 
     await alertPopup.present();
+  }
+
+ async showToast(msg) {
+    let toast = await this.toastCtrl.create({
+      message: msg,
+      position: 'bottom',
+      duration: 2500
+    });
+    toast.present();
   }
 
 }

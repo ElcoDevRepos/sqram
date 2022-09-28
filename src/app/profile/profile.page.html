@@ -2,19 +2,14 @@
 <ion-content>
   <div id="game-board">
     <ion-row id="menu-bar">
-      <ion-col id="menu-icon" size="1">
-        <ion-icon name="menu" (click)="openMenu()"></ion-icon>
+      <ion-col size="1">
+        <ion-icon name="menu" id="menu-icon" (click)="openMenu()" style="color: #7b16b5"></ion-icon>
       </ion-col>
       <ion-col size="6">
-        <h1 id="title">Sqram</h1>
+        <img src="../../assets/images/Sqram_Logo.svg" id="title" (click)="goHome()">
       </ion-col>
-      <ion-col id="heart-icon" size="4">
-
-        <ion-icon name="flag" (click)="goToLeaderboard()" id="career-icon"></ion-icon>
-
-        <ion-icon name="home"  (click)="goHome()" id="flag-icon"></ion-icon>
-
-        <ion-icon name="heart" style='color: red' (click)='openDonate()' id="donate-icon"></ion-icon>
+      <ion-col id="heart-icon" size="5">
+        <ion-icon name="heart" style="color: #7b16b5" (click)='openDonate()' id="donate-icon"></ion-icon>
       </ion-col>
     </ion-row>
     <ion-card>

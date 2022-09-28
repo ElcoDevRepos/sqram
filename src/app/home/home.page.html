@@ -14,14 +14,16 @@
     </div>
     <div id="final-word-container">
       <span *ngFor="let letter of finalWord; let index = index">
-        <scramble-word-letter [letter]="letter" (childCreated)="sqramFinalChildCreated($event, index)" (click)="moveLetterBack(letter, index)" [locked]="isLocked(index)">
+        <scramble-word-letter [letter]="letter" (childCreated)="sqramFinalChildCreated($event, index)"
+          (click)="moveLetterBack(letter, index)" [locked]="isLocked(index)">
         </scramble-word-letter>
       </span>
     </div>
 
     <div id="scramble-word-container">
-      <span *ngFor="let letter of letterArray; let index = index" >
-        <scramble-word-letter [letter]="letter" (childCreated)="sqramChildCreated($event, index)" (click)="moveLetter(letter, index)" id="clickableLetter"></scramble-word-letter>
+      <span *ngFor="let letter of letterArray; let index = index">
+        <scramble-word-letter [letter]="letter" (childCreated)="sqramChildCreated($event, index)"
+          (click)="moveLetter(letter, index)" id="clickableLetter"></scramble-word-letter>
       </span>
     </div>
     <div id="buttons-container">
@@ -29,28 +31,27 @@
         <ion-row>
           <ion-col>
             <span class="badge" *ngIf="getFirstLetter">1</span>
-
-            <ion-button color="dark" fill="outline" (click)="firstLetterHint()"
-              [disabled]="!getFirstLetter || lockedIndexes.includes(0)" class="btn">
-              <ion-icon slot="icon-only" name="flag-outline"></ion-icon>
+            <ion-button style="background: url('../../assets/images/Hint-First-Letter.svg'); background-size:cover"
+              color="dark" fill="clear" class="btn" (click)="firstLetterHint()"
+              [disabled]="!getFirstLetter || lockedIndexes.includes(0)">
             </ion-button>
           </ion-col>
           <ion-col>
             <span class="badge" *ngIf="randomLettersAllowed > 0">{{randomLettersAllowed}}</span>
-            <ion-button color="dark" fill="outline" (click)="randomLetterHint()" [disabled]="!getRandomLetter" class="btn">
-              <ion-icon slot="icon-only" name="extension-puzzle-outline"></ion-icon>
+            <ion-button style="background: url('../../assets/images/Hint-Random-Letter.svg'); background-size:cover"
+              color="dark" fill="clear" (click)="randomLetterHint()" [disabled]="!getRandomLetter" class="btn">
             </ion-button>
           </ion-col>
           <ion-col>
-            <ion-button color="dark" fill="outline" (click)="shuffle()" class="btn">
-              <ion-icon slot="icon-only" name="shuffle"></ion-icon>
+            <ion-button style="background: url('../../assets/images/Shuffle.svg'); background-size:cover" color="dark"
+              fill="clear" (click)="shuffle()" class="btn">
             </ion-button>
           </ion-col>
           <ion-col>
             <span class="badge" *ngIf="skipsAllowed > 0">{{skipsAllowed}}</span>
-            <ion-button color="dark" fill="outline" (click)="skipWord()" class="btn"
-              [disabled]="((!canSkip || activeWord === words.length - 1) && skippedWords.length === 0) || isSkipped(activeWord) || skipsAllowed == 0">
-              <ion-icon slot="icon-only" name="play-forward-outline"></ion-icon>
+            <ion-button color="dark" fill="clear" (click)="skipWord()" class="btn"
+              [disabled]="((!canSkip || activeWord === words.length - 1) && skippedWords.length === 0) || isSkipped(activeWord) || skipsAllowed == 0"
+              style="background: url('../../assets/images/Skip.svg'); background-size:cover">
             </ion-button>
           </ion-col>
         </ion-row>
@@ -58,55 +59,53 @@
     </div>
   </div>
 </ion-content>
-<ion-content *ngIf="!gameResults.active && !loading" id="scrollable">
+<ion-content *ngIf="!gameResults.active && !loading" id="scrollable" style="background: #d1d2d3;">
   <div id="game-board">
     <ion-row id="menu-bar">
-      <ion-col id="menu-icon" size="1">
-        <ion-icon name="menu" (click)="openMenu()"></ion-icon>
+      <ion-col size="1">
+        <ion-icon id="menu-icon" name="menu" (click)="openMenu()" style="color: #7b16b5"></ion-icon>
       </ion-col>
       <ion-col size="6">
-        <h1 id="title">Sqram</h1>
+        <img src="../../assets/images/Sqram_Logo.svg" id="title" width>
       </ion-col>
-      <ion-col id="heart-icon" size="4">
+      <ion-col id="heart-icon" size="5">
 
-        <ion-icon name="bar-chart" (click)="goToCareer()" id="career-icon"></ion-icon>
+        <img src="../../assets/images/Career-Stats.svg" width="35px" (click)="goToCareer()" id="career-icon" />
 
-        <ion-icon name="flag"  (click)="goToLeaderboard()" id="flag-icon"></ion-icon>
+        <img src="../../assets/images/Leaderboard.svg" width="35px" (click)="goToLeaderboard()" id="flag-icon" />
 
-        <ion-icon name="heart" style='color: red' (click)='openDonate()' id="donate-icon"></ion-icon>
+        <ion-icon name="heart" style="color: #7b16b5" (click)='openDonate()' id="donate-icon"></ion-icon>
       </ion-col>
     </ion-row>
     <span id="today" *ngIf="haventPlayedToday()">{{today}}</span>
-    <span id="num-solved" *ngIf="words.length > 0 && secondsPerWord.length > 0 && haventPlayedToday() && isStateToday()">{{getStatus()}}</span>
+    <span id="num-solved"
+      *ngIf="words.length > 0 && secondsPerWord.length > 0 && haventPlayedToday() && isStateToday()">{{getStatus()}}</span>
 
     <div id="stats-area" *ngIf="words.length > 0 && haventPlayedToday() && isStateToday()">
-      <ion-row *ngFor="let word of words; let i = index" id="words-container">
+      <ion-row *ngFor="let word of words; let i = index" id="words-container" style="    margin-bottom: -10px;">
         <ion-col id="words"
           [ngStyle]="{'color': !secondsPerWord[i] ? 'red' : powerupsUsed[i] && (powerupsUsed[i].includes('flh') || powerupsUsed[i].includes('rlh')) ? 'goldenrod' : 'black'}">
           <span style="display: flex;
           flex-direction: row;
-          align-items: center;">
+          align-items: center; white-space: nowrap;">
             <span style="width: 60%">
               <p>
                 {{word.text}}
-              </p>
-              <p>{{word.hint}}</p>
-            </span>
-            <span style="margin-left: 6px; width: 40%">
-              <span *ngFor="let item of powerupsUsed[i]; let ind = index">
-                <span *ngIf="item === 'rlh'">
-                  <ion-icon name="information-circle" style="font-size: 25px;"></ion-icon>x{{anyLetterUsed[i]}}
-                </span>
-                <span *ngIf="item === 'flh'">
-                  <ion-icon name="alert" style="font-size: 25px;"></ion-icon>x{{firstLetterUsed[i]}}
-                </span>
-                <span *ngIf="item === 'skip'">
-                  <ion-icon name="play-forward" style="font-size: 25px;"></ion-icon>x{{skipsUsedPerWord[i]}}
-                </span>
-                <br>
-              </span>
+                <span style="margin-left: 6px; width: 40%; white-space: nowrap;">
 
+                  <span *ngIf="anyLetterUsed[i] > 0 || firstLetterUsed[i] > 0">
+                    <ion-icon name="bulb" style="font-size: 20px;"></ion-icon>x{{(firstLetterUsed[i] || 0) +
+                    (anyLetterUsed[i] || 0)}}
+                  </span>
+                  <span *ngIf="skipsUsedPerWord[i] > 0">
+                    <ion-icon name="play-forward" style="font-size: 20px;"></ion-icon>x{{skipsUsedPerWord[i]}}
+                  </span>
+
+                </span>
+              </p>
+              <p style="font-size: 13px;">{{word.hint}}</p>
             </span>
+
 
           </span>
           <br>
@@ -118,38 +117,43 @@
           <span *ngIf="!secondsPerWord[i]" style="color: red">DNF</span>
         </ion-col>
       </ion-row>
-      <ion-row id="words-container">
+      <ion-row id="words-container" style="margin-top: 25px">
         <ion-col id="words">
           <p style="font-weight: bold">Time to Complete:</p>
           <p style="font-weight: bold">Solve per Word:</p>
         </ion-col>
         <ion-col id="time">
-          <p *ngIf="solvedWords.length === words.length && !solvedWords.includes(null) && !solvedWords.includes(undefined)">{{secondsPerWord | cumulate}}s
+          <p
+            *ngIf="solvedWords.length === words.length && !solvedWords.includes(null) && !solvedWords.includes(undefined)">
+            {{secondsPerWord | cumulate}}s
           </p>
-          <p *ngIf="solvedWords.length !== words.length || (solvedWords.includes(null) || solvedWords.includes(undefined))" style="color: red">DNF</p>
+          <p *ngIf="solvedWords.length !== words.length || (solvedWords.includes(null) || solvedWords.includes(undefined))"
+            style="color: red">DNF</p>
 
           <p>{{secondsPerWord | average}}s</p>
         </ion-col>
       </ion-row>
     </div>
-    <div id="next-game" *ngIf="words.length > 0 && haventPlayedToday()">
-      <h2>Next Sqram</h2>
-      <div>{{timeUntil}}</div>
-    </div>
-    <div id="motto" *ngIf="!haventPlayedToday()">
-      Unsqramble ten words before time runs out
-    </div>
-    <div id="share-btn">
-      <ion-button (click)="shareStats()" class="minimal-btn" color="dark" *ngIf="haventPlayedToday() && isStateToday()" class="btn">
-        Share
-      </ion-button>
-    </div>
-    <div id="start-btn">
+    <ion-row style="display: flex; align-items: center;">
+      <ion-col style="margin: 10px;">
+        <span id="next-game" *ngIf="words.length > 0 && haventPlayedToday()">
+          <p style="font-weight: bold; margin: 0;">Next Sqram</p>
+          <p style="font-weight: bold; margin: 0;">{{timeUntil}}</p>
+        </span>
+      </ion-col>
+      <ion-col style="margin: 10px;" *ngIf="haventPlayedToday() && isStateToday()">
+        <img id="share-btn" src="../../assets/images/Share_Icon.svg" (click)="shareStats()" width="95px"
+          style="margin-top: 5px" />
+      </ion-col>
+    </ion-row>
 
-      <ion-button (click)="startGame()" class="minimal-btn" color="dark" *ngIf="!haventPlayedToday()" class="btn">
-        GO
-      </ion-button>
+    <div id="motto" *ngIf="!haventPlayedToday()">
+      Unsqramble ten words <br>
+      before time runs out
     </div>
+
+    <img src="../../assets/images/Go!.svg" (click)="startGame()" *ngIf="!haventPlayedToday()" width="75px"
+      style="margin-top: 215px" />
   </div>
 </ion-content>
 <ion-content *ngIf="loading">

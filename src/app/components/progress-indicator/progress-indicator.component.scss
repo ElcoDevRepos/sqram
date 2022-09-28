@@ -11,15 +11,7 @@
 .indicator.active {
     height: 15px;
     width: 15px;
-    background: rgb(10,0,255);
-background: -moz-radial-gradient(circle, rgba(10,0,255,1) 50%, rgb(255, 255, 255) 100%);
-background: -webkit-radial-gradient(circle, rgba(10,0,255,1) 50%, rgb(255, 255, 255) 100%);
-background: radial-gradient(circle, rgba(10,0,255,1) 50%, rgb(255, 255, 255) 100%);
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0a00ff",endColorstr="#969699",GradientType=1);
-    //background-color: #0000ff;
-    border-radius: 50%;
-    display: inline-block;
-    margin: 5px;
+    background: #7a16b5;
 }
 
 .indicator.skipped {
@@ -39,13 +31,5 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fffe00",endCo
 .indicator.solved {
     height: 15px;
     width: 15px;
-    background: rgb(0,255,10);
-background: -moz-radial-gradient(circle, rgba(0,255,10,1) 50%, rgb(255, 255, 255) 100%);
-background: -webkit-radial-gradient(circle, rgba(0,255,10,1) 50%, rgb(255, 255, 255) 100%);
-background: radial-gradient(circle, rgba(0,255,10,1) 50%, rgb(255, 255, 255) 100%);
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#00ff0a",endColorstr="#969996",GradientType=1);
-    //background-color: green;
-    border-radius: 50%;
-    display: inline-block;
-    margin: 5px;
+    background: #8dc63f;
 }

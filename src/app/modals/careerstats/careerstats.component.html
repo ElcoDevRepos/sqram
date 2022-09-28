@@ -2,8 +2,9 @@
   <ion-row id="menu-bar">
     <ion-col id="menu-icon">
     </ion-col>
-    <ion-col>
-      <h1 id="title">Sqram</h1>
+    <ion-col style="display: flex;
+    justify-content: center;">
+      <img id="title" src="../../../assets/images/Sqram_Logo.svg" (click)="close()"/>
     </ion-col>
     <ion-col id="heart-icon">
     </ion-col>
@@ -39,7 +40,7 @@
         <ion-col>Word Solve Rate</ion-col>
         <ion-col>{{gameResults.stats.wordSolveRate || 0}}%</ion-col>
       </ion-row>-->
-       <ion-row>
+      <ion-row>
         <ion-col>Games Played</ion-col>
         <ion-col>{{gameResults.timesPlayed || 0}}</ion-col>
       </ion-row>
@@ -62,10 +63,11 @@
     </div>
   </div>
   <div id="next-game">
-    <h2>Next Sqram</h2>
-    <div>{{timeUntil}}</div>
+    <p style="font-weight: bold; margin: 0; margin-top: 17px; font-size: 18px;">Next Sqram</p>
+      <p style="font-weight: bold; margin: 0; font-size: 18px;">{{timeUntil}}</p>
   </div>
   <div id="close">
-    <ion-button color="dark" (click)="close()">Close</ion-button>
+    <img src="../../../assets/images/Close_Icon.svg" (click)="close()" width="75px"
+       />
   </div>
 </ion-content>

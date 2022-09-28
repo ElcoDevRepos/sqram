@@ -4,7 +4,7 @@
   overflow-y: none; // hide vertical
   overflow-x: none;
   --overflow: hidden;
-  --background: #fcfcfc;
+  --background: #f3f3f3;
 }
 
 h1 {
@@ -21,6 +21,20 @@ h1 {
     display: flex;
     align-items: center;
     flex-direction: column;
+    height: 100vh;
+    background-color: white;
+    border: 1px solid #bcbcbc;
+    box-shadow: 0px 7px 20px 0px #bdbdbd;
+  }
+  #game-board-active {
+    padding-top: 45px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    background-color: white;
+    border: 1px solid #bcbcbc;
+    box-shadow: 0px 7px 20px 0px #bdbdbd;
   }
 }
 
@@ -31,16 +45,27 @@ h1 {
     flex-direction: column;
     width: 500px;
     margin: auto;
+    height: 100vh;
+    background-color: white;
+    border: 1px solid #bcbcbc;
+    box-shadow: 0px 7px 20px 0px #bdbdbd;
+  }
+  #game-board-active {
+    padding-top: 45px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    width: 500px;
+    margin: auto;
+    background-color: white;
+    border: 1px solid #bcbcbc;
+    box-shadow: 0px 7px 20px 0px #bdbdbd;
   }
 }
 
 
-#game-board-active {
-  margin-top: 45px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
+
 
 #menu-bar {
   display: flex;
@@ -52,12 +77,26 @@ h1 {
     display: flex;
     flex-direction: row;
     font-size: 35px;
-    justify-content: space-around;
+    padding: 5px;
+    justify-content: flex-end;
+  }
+  #donate-icon:before,
+  #flag-icon:before,
+  #career-icon:before,
+  #menu-icon:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
   }
 
-  #donate-icon:hover,  #flag-icon:hover, #career-icon:hover, #menu-icon:hover {
+  #donate-icon:hover,
+  #flag-icon:hover,
+  #career-icon:hover,
+  #menu-icon:hover {
     transform: scale(1.1);
-  }
+  }   
+
   #menu-icon {
     display: flex;
     flex-direction: column;
@@ -101,7 +140,7 @@ h1 {
 
 #stats-area {
   width: 100%;
-  padding-left: 50px;
+  padding-left: 21px;
 
   ion-row,
   ion-col,
@@ -124,7 +163,8 @@ h1 {
     #time {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-end;
+      margin-right: 21px;
     }
   }
 }
@@ -149,31 +189,36 @@ button {
 }
 
 #title {
-  font-family: Marker Felt, fantasy;
-  font-size: 50px;
-  text-shadow: 0px 7px 10px #bababa;
-  color: #004b4d;
   padding-bottom: 15px;
+  width: 120px;
+  padding-top: 15px;
+  margin-left: 25px;
 }
 
 #share-btn {
   margin-top: 25px;
 }
 
+#share-btn:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
 #next-game {
   text-align: center;
+
   div {
     font-size: 25px;
   }
 }
 
 #today {
-  font-size: xx-large;
+  font-size: 18px;
   font-weight: bold;
 }
 
 #num-solved {
-  font-size: 20px;
+  font-size: 15px;
   font-weight: bold;
 }
 
@@ -182,10 +227,10 @@ button {
   background-color: black;
   color: white;
   border-radius: 100%;
-  padding: 7px;
+  padding: 6px;
   height: 30px;
   right: -5px;
-  top: -5px;
+  top: 7px;
   position: absolute;
   text-align: center;
 }
@@ -193,9 +238,14 @@ button {
 #motto {
   margin-top: 50px;
   margin-bottom: 50px;
-  font-size: 30px;
+  font-size: 22px;
   font-weight: bold;
   text-align: center;
+}
+.btn {
+  padding: 30px;
+  margin: 10px;
+  margin-top: 20px;
 }
 .btn:active {
   transform: scale(1.1);

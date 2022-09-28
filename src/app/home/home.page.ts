@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild, ɵɵsetComponentScope } from '@angular/core';
-import { AlertController, MenuController, ModalController, Platform } from '@ionic/angular';
+import { AlertController, MenuController, ModalController, Platform, ToastController } from '@ionic/angular';
 import { Word } from '../classes/word';
 import { Preferences } from '@capacitor/preferences';
 import * as dayjs from 'dayjs';
@@ -77,7 +77,7 @@ export class HomePage {
   letterRowComponents: Array<ScrambleWordLetterComponent> = [];
   hintUsedOnLastLetter = false;
   constructor(private alertCtrl: AlertController, private firestore: Firestore, private auth: Auth, private modalCtrl: ModalController, private menu: MenuController,
-    private router: Router, private platform: Platform
+    private router: Router, private platform: Platform, private toastCtrl: ToastController
   ) {
 
   }
@@ -397,7 +397,9 @@ export class HomePage {
           }
           if (!this.getRandomLetter)
             this.getRandomLetter = true;
-          this.randomLettersAllowed += 1;
+          if (this.randomLettersAllowed < 9) {
+            this.randomLettersAllowed += 1;
+          }
           this.moveToNextRound();
           // If we have skipped any words, go back to them at this point
         } else if (this.skippedWords.length > 0) {
@@ -535,6 +537,7 @@ export class HomePage {
   }
 
   firstLetterHint() {
+    if (!this.getFirstLetter) return;
     this.getFirstLetter = !this.getFirstLetter;
 
     let realWorld = this.words[this.activeWord].text.toLowerCase();
@@ -551,7 +554,9 @@ export class HomePage {
     }
     this.finalWord[0] = letter;
     try {
-      this.finalRowComponents[0].startExpand();
+      setTimeout(() => {
+        this.finalRowComponents[0].startExpand();
+      }, 100)
     } catch (error) {
       console.log(error);
     }
@@ -602,7 +607,9 @@ export class HomePage {
     }
     this.finalWord[foundIndex] = randomLetter;
     try {
-      this.finalRowComponents[foundIndex].startExpand();
+      setTimeout(() => {
+        this.finalRowComponents[foundIndex].startExpand();
+      }, 100)
     } catch (error) {
       console.log(error);
     }
@@ -747,7 +754,7 @@ export class HomePage {
         string: text
       });
 
-      alert("Copied to Clipboard")
+      this.showToast("Copied to Clipboard")
     }
     await Share.share({
       title: 'Share your results with your friends!',
@@ -819,7 +826,7 @@ export class HomePage {
           if (!this.isLocked(i)) this.finalWord[i] = '';
         }
       }
-      
+
     }
     this.letterArray.sort(() => Math.random() - 0.5);
 
@@ -908,7 +915,11 @@ export class HomePage {
         total = (total / 1000);
 
         if (!this.gameResults.stats.timeToComplete) this.gameResults.stats.timeToComplete = parseFloat(total.toFixed(1));
-        else this.gameResults.stats.timeToComplete = parseFloat(((total + this.gameResults.stats.timeToComplete) / 2).toFixed(1));
+        else {
+          if (!isNaN(total) && !isNaN(this.gameResults.stats.timeToComplete)) {
+            this.gameResults.stats.timeToComplete = parseFloat(((total + this.gameResults.stats.timeToComplete) / 2).toFixed(1));
+          }
+        }
         // Done
       } else {
         // fix perfect logic here
@@ -1032,13 +1043,13 @@ export class HomePage {
         header: 'Login or create an account to see how you rank against friends and save your stats wherever you Sqram! ',
         buttons: [
           {
-            text: 'Claim Account',
+            text: 'Create Account',
             handler: (d) => {
               this.claim()
             }
           },
           {
-            text: 'Login',
+            text: 'Log In',
             handler: (d) => {
               this.login()
             }
@@ -1057,18 +1068,36 @@ export class HomePage {
 
   async claim() {
     const alertPopup = await this.alertCtrl.create({
-      header: 'Please enter your new account info',
+      header: 'Enter New Account Info',
       buttons: [
         {
           text: 'OK',
-          handler: (d) => {
+          handler: async (d) => {
+            const responsesRef = collection(
+              this.firestore,
+              "users"
+            );
+            const q = query(responsesRef, where('name', '==', d[2]));
+            let docs = await getDocs(q);
+            if (!docs.empty) {
+              this.showToast("Username already exists");
+              return;
+            }
             const credential = EmailAuthProvider.credential(d[0], d[1]);
             linkWithCredential(this.auth.currentUser, credential)
               .then(async (usercred) => {
-                await updateProfile(usercred.user, {displayName: d[2]});
+
+                await updateProfile(usercred.user, { displayName: d[2] });
+                await updateDoc(doc(this.firestore, "users", this.auth.currentUser.uid), {
+                  name: d[2]
+                })
                 window.location.reload();
               }).catch((error) => {
-                alert("Account linking error: " + error);
+                if (error.message.includes("auth/email-already-in-use")) {
+                  this.showToast("Email Already in Use!");
+                } else if (error.message.includes("auth/weak-password")) {
+                  this.showToast("Password should be at least 6 characters.")
+                }
               });
           }
         }
@@ -1080,11 +1109,14 @@ export class HomePage {
         },
         {
           type: 'password',
-          placeholder: 'password',
+          placeholder: 'Password',
         },
         {
           type: 'text',
-          placeholder: 'username',
+          placeholder: 'Username',
+          attributes: {
+            maxlength: 10,
+          },
         },
       ],
     });
@@ -1114,7 +1146,7 @@ export class HomePage {
         },
         {
           type: 'password',
-          placeholder: 'password',
+          placeholder: 'Password',
         },
       ],
     });
@@ -1130,8 +1162,11 @@ export class HomePage {
   }
 
   sqramFinalChildCreated(item, index) {
-    if (this.letterRowComponents.length <= this.letterArray.length)
+    console.log(index);
+    if (this.finalRowComponents.length <= this.finalWord.length) {
       this.finalRowComponents[index] = item;
+      console.log(this.finalRowComponents);
+    }
   }
 
   isStateToday() {
@@ -1168,6 +1203,15 @@ export class HomePage {
         }
       }, 50)
     }
+  }
+
+  async showToast(msg) {
+    let toast = await this.toastCtrl.create({
+      message: msg,
+      position: 'bottom',
+      duration: 2500
+    });
+    toast.present();
   }
 
   /**

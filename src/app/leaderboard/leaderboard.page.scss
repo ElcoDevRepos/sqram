@@ -3,6 +3,10 @@
       display: flex;
       align-items: center;
       flex-direction: column;
+      background: white;
+      height: 100vh;
+      border: 1px solid #bcbcbc;
+    box-shadow: 0px 7px 20px 0px #bdbdbd;
     }
   }
   
@@ -13,17 +17,25 @@
       flex-direction: column;
       width: 500px;
       margin: auto;
+      background: white;
+      height: 100vh;
+      border: 1px solid #bcbcbc;
+    box-shadow: 0px 7px 20px 0px #bdbdbd;
     }
   }
-  
-  #title {
-    font-family: Marker Felt, fantasy;
-    font-size: 50px;
-    text-shadow: 0px 7px 10px #bababa;
-    color: #004b4d;
-    padding-bottom: 15px;
-    margin-left: 15px;
+  .hover-effect:hover {
+    transform: scale(1.1);
   }
+  
+#title {
+  padding-bottom: 15px;
+  width: 120px;
+  padding-top: 15px;
+  margin-left: 25px;
+}
+#title:hover {
+  transform: scale(1.1);
+}
   
     #menu-bar {
       display: flex;
@@ -35,7 +47,7 @@
         display: flex;
         flex-direction: row;
         font-size: 35px;
-        justify-content: space-around;
+        justify-content: flex-end;
       }
     
       #donate-icon:hover,  #flag-icon:hover, #career-icon:hover, #menu-icon:hover {
@@ -58,8 +70,6 @@
     }
 
 .inactive {
-  --background: white;
-  border: 1px solid black;
   border-radius: 10px;
   width: 50px;
   height: 50px;
@@ -67,7 +77,6 @@
 }
 
 .active {
-  --background: #00fbff;
   border: 1px solid black;
   border-radius: 10px;
   width: 50px;
@@ -82,3 +91,13 @@
 .btn:hover {
   transform: scale(1.1);
 }
+
+#donate-icon:before,
+  #flag-icon:before,
+  #career-icon:before,
+  #menu-icon:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }

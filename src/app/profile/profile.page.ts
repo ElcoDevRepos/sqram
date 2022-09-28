@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, MenuController } from '@ionic/angular';
+import { AlertController, MenuController, ToastController } from '@ionic/angular';
 import { Auth, EmailAuthProvider, linkWithCredential, signInWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
 import { Firestore, updateDoc, doc, query, where, collection, getDocs } from '@angular/fire/firestore';
 import { addDoc, deleteDoc, getDoc } from '@firebase/firestore';
@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 export class ProfilePage implements OnInit {
   displayName = "";
   friends = [];
-  constructor(public menu: MenuController, private alertCtrl: AlertController, public auth: Auth, private firestore: Firestore, private router: Router) { }
+  constructor(public menu: MenuController, private alertCtrl: AlertController, public auth: Auth, private firestore: Firestore, private router: Router, private toastCtrl: ToastController) { }
 
   ngOnInit() {
     this.auth.onAuthStateChanged(async (a) => {
@@ -66,12 +66,12 @@ export class ProfilePage implements OnInit {
                 updateProfile(this.auth.currentUser, { displayName: name }).then(() => {
                   updateDoc(doc(this.firestore, 'users', this.auth.currentUser.uid), {
                     name
-                  }).then(() => alert("Profile Updated"))
+                  }).then(() => this.showToast("Profile Updated"))
                 });
               }
               else 
               {
-                alert("That Name Already Exists!");
+                this.showToast("That Name Already Exists!");
                 return false;
               }
             }
@@ -83,7 +83,7 @@ export class ProfilePage implements OnInit {
       inputs: [
         {
           type: 'text',
-          placeholder: 'slipperyPossum75',
+          placeholder: '',
           attributes: {
             maxlength: 10,
           },
@@ -96,20 +96,20 @@ export class ProfilePage implements OnInit {
 
   async addFriend() {
     const alertPopup = await this.alertCtrl.create({
-      header: 'Please enter a friend\'s name',
+      header: 'Enter a Friend\’s Name',
       buttons: [
         {
           text: 'OK',
           handler: async (d) => {
             let name = d[0];
             if (name === this.auth.currentUser.displayName) {
-              alert("Don't enter you're own name!");
+              this.showToast("Don't enter you're own name!");
               return;
             }
             name = name.toLowerCase();
             let docs = await getDocs(query(collection(this.firestore, 'users', this.auth.currentUser.uid, 'friends'), where('name', '==', name)));
             if (!docs.empty) {
-              alert("Friend Already Added!");
+              this.showToast("Friend Already Added!");
               return;
             }
             const responsesRef = collection(
@@ -118,11 +118,15 @@ export class ProfilePage implements OnInit {
             );
             const q = query(responsesRef, where('name', '==', name));
             getDocs(q).then((docs) => {
+              if (docs.empty) {
+                this.showToast("Friend Does Not Exist");
+                return;
+              }
               docs.forEach((d) => {
                 addDoc(collection(this.firestore, 'users', this.auth.currentUser.uid, 'friends'), {
                   uid: d.id,
                   name: d.data().name,
-                }).then(() => {alert("Friend Added");  this.getFriends()})
+                }).then(() => {this.showToast("Friend Added");  this.getFriends()})
               })
             })
 
@@ -133,7 +137,10 @@ export class ProfilePage implements OnInit {
       inputs: [
         {
           type: 'text',
-          placeholder: 'slipperyPossum75'
+          placeholder: '',
+          attributes: {
+            maxlength: 10,
+          },
         },
       ],
     });
@@ -143,7 +150,7 @@ export class ProfilePage implements OnInit {
 
   async remove(name) {
     const alertPopup = await this.alertCtrl.create({
-      header: 'Would you like to Remove this friend?',
+      header: 'Remove this friend?',
       buttons: [
         {
           text: 'Yes',
@@ -152,7 +159,7 @@ export class ProfilePage implements OnInit {
             console.log(name);
             let docs = await getDocs(query(collection(this.firestore, 'users', this.auth.currentUser.uid, 'friends'), where('name', '==', name.name)));
             if (docs.empty) {
-              alert("Friend Not Found!");
+              this.showToast("Friend Not Found!");
               return;
             }
             console.log(docs.empty);
@@ -182,13 +189,13 @@ export class ProfilePage implements OnInit {
         header: 'Login or create an account to see how you rank against friends and save your stats wherever you Sqram! ',
         buttons: [
           {
-            text: 'Claim Account',
+            text: 'Create Account',
             handler: (d) => {
               this.claim()
             }
           },
           {
-            text: 'Login',
+            text: 'Log In',
             handler: (d) => {
               this.login()
             }
@@ -207,16 +214,25 @@ export class ProfilePage implements OnInit {
 
   async claim() {
     const alertPopup = await this.alertCtrl.create({
-      header: 'Please enter your new account info',
+      header: 'Enter New Account Info',
       buttons: [
         {
           text: 'OK',
           handler: (d) => {
             const credential = EmailAuthProvider.credential(d[0], d[1]);
             linkWithCredential(this.auth.currentUser, credential)
-              .then((usercred) => {
+              .then(async (usercred) => {
+                await updateProfile(usercred.user, {displayName: d[2]});
+                await updateDoc(doc(this.firestore, "users", this.auth.currentUser.uid), {
+                  name: d[2]
+                })
+                window.location.reload();
               }).catch((error) => {
-                alert("Account linking error: " + error);
+                if (error.message.includes("auth/email-already-in-use")) {
+                  this.showToast("Email Already in Use!");
+                } else if (error.message.includes("auth/weak-password")) {
+                  this.showToast("Password should be at least 6 characters.")
+                }
               });
           }
         }
@@ -228,7 +244,7 @@ export class ProfilePage implements OnInit {
         },
         {
           type: 'password',
-          placeholder: 'password',
+          placeholder: 'Password',
         },
       ],
     });
@@ -258,7 +274,7 @@ export class ProfilePage implements OnInit {
         },
         {
           type: 'password',
-          placeholder: 'password',
+          placeholder: 'Password',
         },
       ],
     });
@@ -266,5 +282,14 @@ export class ProfilePage implements OnInit {
     this.menu.close();
     await alertPopup.present();
 
+  }
+
+  async showToast(msg) {
+    let toast = await this.toastCtrl.create({
+      message: msg,
+      position: 'bottom',
+      duration: 2500
+    });
+    toast.present();
   }
 }
