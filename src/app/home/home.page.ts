@@ -17,6 +17,7 @@ import { Animation, AnimationController } from '@ionic/angular';
 import { ScrambleWordLetterComponent } from '../components/scramble-word-letter/scramble-word-letter.component';
 import { Clipboard } from '@capacitor/clipboard';
 import { updateProfile } from '@firebase/auth';
+import { StatsService } from '../services/stats.service';
 
 dayjs.extend(utc);
 @Component({
@@ -50,6 +51,8 @@ export class HomePage {
   stashSkippedWord = [];
   solvedWords: Array<number> = [];
   powerupsUsed: Array<Array<string>> = [];
+  hintsUsed: number = 0;
+  puzzleNum: number;
   skipsUsed: number = 0;
   skipsUsedPerWord: Array<number> = [];
   anyLetterUsed: Array<number> = [];
@@ -59,7 +62,6 @@ export class HomePage {
   stashLockedIndexes = [];
   started: boolean = false;
   ended: boolean = false;
-  today: string = dayjs().utc().format("MM.DD.YY");
   doDaysMatch: boolean;
   serverDate: string;
   emojiNumberArray: Array<string> = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
@@ -77,7 +79,7 @@ export class HomePage {
   letterRowComponents: Array<ScrambleWordLetterComponent> = [];
   hintUsedOnLastLetter = false;
   constructor(private alertCtrl: AlertController, private firestore: Firestore, private auth: Auth, private modalCtrl: ModalController, private menu: MenuController,
-    private router: Router, private platform: Platform, private toastCtrl: ToastController
+    private router: Router, private platform: Platform, private toastCtrl: ToastController, private statsService: StatsService
   ) {
 
   }
@@ -108,6 +110,7 @@ export class HomePage {
     let dbDate = await getDoc(doc(this.firestore, "today", "5lhhN8UFP7KU6DKgIpHr"));
 
     let serverDay = dbDate.data().today;
+    this.puzzleNum = dbDate.data().puzzle.toString().padStart(3, "0");
     if (serverDay.includes('\'')) {
       serverDay = serverDay.replaceAll('\'', '');
     }
@@ -149,6 +152,20 @@ export class HomePage {
         } as Careerstats
       } as GameStats;
     }
+    let lastPlayed = dayjs(this.gameResults.lastPlayed).utc();
+    let today = dayjs().utc();
+    let daysBetween = today.diff(lastPlayed, 'days');
+    if (daysBetween > 1) {
+      // reset max perfect streak
+      if (this.gameResults.stats.perfectStreaks >= this.gameResults.stats.maxPerfectStreaks) {
+        this.gameResults.stats.maxPerfectStreaks = this.gameResults.stats.perfectStreaks;
+      }
+      this.gameResults.stats.perfectStreaks = 0;
+      updateDoc(doc(this.firestore, "users", this.gameResults.uid), {
+        stats: this.gameResults.stats,
+      })
+    }
+    console.log(this.gameResults);
 
     this.loading = false;
   }
@@ -233,6 +250,7 @@ export class HomePage {
             this.solvedWords = state.solvedWords;
             this.powerupsUsed = state.powerupsUsed;
             this.skipsUsed = state.skipsUsed;
+            this.hintsUsed = state.hintsUsed;
             this.anyLetterUsed = state.anyLetterUsed;
             this.firstLetterUsed = state.firstLetterUsed;
             this.skipsUsedPerWord = state.skipsUsedPerWord;
@@ -284,6 +302,7 @@ export class HomePage {
             this.solvedWords = state.solvedWords;
             this.powerupsUsed = state.powerupsUsed;
             this.skipsUsed = state.skipsUsed;
+            this.hintsUsed = state.hintsUsed;
             this.anyLetterUsed = state.anyLetterUsed;
             this.firstLetterUsed = state.firstLetterUsed;
             this.skipsUsedPerWord = state.skipsUsedPerWord;
@@ -324,6 +343,7 @@ export class HomePage {
       lockedIndexes: this.lockedIndexes,
       secondsPerWord: this.secondsPerWord,
       skipsUsed: this.skipsUsed,
+      hintsUsed: this.hintsUsed,
       anyLetterUsed: this.anyLetterUsed,
       firstLetterUsed: this.firstLetterUsed,
       skipsUsedPerWord: this.skipsUsedPerWord,
@@ -572,6 +592,7 @@ export class HomePage {
     if (!Array.isArray(this.powerupsUsed[this.activeWord])) this.powerupsUsed[this.activeWord] = [];
     if (!this.powerupsUsed[this.activeWord].includes('flh')) this.powerupsUsed[this.activeWord].push('flh');
     this.gameResults.hintsUsed = this.gameResults.hintsUsed ? this.gameResults.hintsUsed += 1 : 1;
+    this.hintsUsed += 1;
     this.addTime(-6)
     this.wordTimer += 6000;
     this.firstLetterUsed[this.activeWord] = isNaN(this.firstLetterUsed[this.activeWord]) ? 1 : this.firstLetterUsed[this.activeWord] += 1;
@@ -606,10 +627,13 @@ export class HomePage {
       }
     }
     this.finalWord[foundIndex] = randomLetter;
+
     try {
-      setTimeout(() => {
-        this.finalRowComponents[foundIndex].startExpand();
-      }, 100)
+      if (this.finalWord.includes('')) {
+        setTimeout(() => {
+          this.finalRowComponents[foundIndex].startExpand();
+        }, 100)
+      }
     } catch (error) {
       console.log(error);
     }
@@ -619,6 +643,7 @@ export class HomePage {
     if (!Array.isArray(this.powerupsUsed[this.activeWord])) this.powerupsUsed[this.activeWord] = [];
     if (!this.powerupsUsed[this.activeWord].includes('rlh')) this.powerupsUsed[this.activeWord].push('rlh');
     this.gameResults.hintsUsed = this.gameResults.hintsUsed ? this.gameResults.hintsUsed += 1 : 1;
+    this.hintsUsed += 1;
     if (!this.hintUsedOnLastLetter) this.addTime(-3);
     this.wordTimer += 3000;
     this.randomLettersAllowed -= 1;
@@ -708,7 +733,7 @@ export class HomePage {
     this.solvedWords.forEach((w) => {
       if (w || w === 0) solved += 1;
     })
-    text = "Sqram " + dayjs().utc().format("MM.DD.YY") + " " + solved + "/" + this.words.length + "\n\n";
+    text = "Sqram #" + this.puzzleNum + " " + solved + "/" + this.words.length + "\n\n";
     index = 0;
     for (let i = 0; i < this.words.length; i++) {
       let s = this.secondsPerWord[i];
@@ -854,6 +879,7 @@ export class HomePage {
 
 
     this.figureStats().then(() => {
+      this.goToCareer();
       updateDoc(doc(this.firestore, "users", this.gameResults.uid), {
         active: this.gameResults.active,
         bestTime: this.gameResults.bestTime,
@@ -868,7 +894,7 @@ export class HomePage {
   }
 
   async figureStats() {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       let completedGames = 0;
       if (!this.gameResults.stats) {
         this.gameResults.stats = {
@@ -883,7 +909,7 @@ export class HomePage {
           timePerWord: 0
         }
       }
-      if (this.solvedWords.length === this.words.length && (!this.solvedWords.includes(undefined) || !this.solvedWords.includes(null))) {
+      if (this.solvedWords.length === this.words.length && !this.solvedWords.includes(undefined) && !this.solvedWords.includes(null)) {
         // They completed the game
         if (isNaN(this.gameResults.stats.gamesWon))
           this.gameResults.stats.gamesWon = 1;
@@ -949,6 +975,71 @@ export class HomePage {
       let average = parseFloat((arrAvg(this.secondsPerWord) / 1000).toFixed(1));
       this.gameResults.stats.timePerWord = this.gameResults.stats.timePerWord ? parseFloat(((this.gameResults.stats.timePerWord + average) / 2).toFixed(1)) : average;
       // Done
+
+      let solvedWords = 0;
+      this.solvedWords.forEach((w) => {
+        if (w || w === 0) solvedWords += 1;
+      });
+
+      let statsObj = <any>{};
+
+      let wordsUsedHints = [];
+      let wordsSkipped = [];
+      for (let i = 0; i < this.powerupsUsed.length; i++) {
+        if (this.powerupsUsed[i]) {
+          for (let j = 0; j < this.powerupsUsed[i].length; j++) {
+            if (this.powerupsUsed[i][j] == 'flh' || this.powerupsUsed[i][j] == 'rlh') {
+              wordsUsedHints[i] = ((this.anyLetterUsed[i] || 0 ) + (this.firstLetterUsed[i] || 0));
+            }
+            if (this.powerupsUsed[i][j] == 'skip') {
+              wordsSkipped.push(i);
+            }
+          }
+        }
+      }
+
+      let wordsNotSolved = [];
+      for (let i = 0; i < this.words.length; i++) {
+        let s = this.secondsPerWord[i];
+        if (!s) {
+          wordsNotSolved.push(i);
+        }
+      }
+      /**
+       * Need to calculate this data and pass it
+       * 
+       * today's game date
+       * isPerfect
+       * numSolved (x/10)
+       * skipsUsed
+       * hintsUsed
+       * solveTimePerWord
+       * words DNF
+       * words hints were used on
+       * words skipped
+       */
+      let total = 0;
+       for (let i of this.secondsPerWord) {
+        total += i
+      }
+
+      let isTen = !this.solvedWords.includes(undefined) && !this.solvedWords.includes(null) && this.secondsPerWord.length === this.words.length
+  
+      total = parseFloat((total / 1000).toFixed(1));
+
+      statsObj.today = dayjs().utc().format('MM/DD/YY');
+      statsObj.wasTodayPerfect = this.isPerfect();
+      statsObj.numSolved = solvedWords || 0;
+      statsObj.skipsUsed = this.skipsUsed;
+      statsObj.hintsUsed = this.hintsUsed;
+      statsObj.solveTimePerWord = average || 0;
+      statsObj.wordsNotSolved = wordsNotSolved;
+      statsObj.wordsUsedHints = wordsUsedHints;
+      statsObj.wordsSkipped = wordsSkipped;
+      statsObj.timeForPerfect = this.isPerfect() ? (total || 0) : 0;
+      statsObj.timeToComplete = isTen ? (total || 0) : 0;
+      statsObj.isTen = isTen;
+      await this.statsService.calculateGamesResults(statsObj);
       resolve(true);
     });
   }
@@ -1040,7 +1131,7 @@ export class HomePage {
   async goToLeaderboard() {
     if (this.auth.currentUser.email === null) {
       const alertPopup = await this.alertCtrl.create({
-        header: 'Login or create an account to see how you rank against friends and save your stats wherever you Sqram! ',
+        header: 'Log In or create an account to see how you rank against friends and save your stats wherever you Sqram! ',
         buttons: [
           {
             text: 'Create Account',
@@ -1162,10 +1253,8 @@ export class HomePage {
   }
 
   sqramFinalChildCreated(item, index) {
-    console.log(index);
     if (this.finalRowComponents.length <= this.finalWord.length) {
       this.finalRowComponents[index] = item;
-      console.log(this.finalRowComponents);
     }
   }
 

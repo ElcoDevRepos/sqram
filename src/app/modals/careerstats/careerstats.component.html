@@ -50,11 +50,11 @@
       </ion-row>
       <ion-row>
         <ion-col>Hints per Game</ion-col>
-        <ion-col>{{((gameResults.hintsUsed / gameResults.timesPlayed).toFixed(1)) || 0 | number:'1.1-1'}}</ion-col>
+        <ion-col>{{(gameResults.hintsUsed / gameResults.timesPlayed) || 0 | number:'1.1-1'}}</ion-col>
       </ion-row>
       <ion-row>
         <ion-col>Skips per Game</ion-col>
-        <ion-col>{{((gameResults.skipsUsed / gameResults.timesPlayed).toFixed(1)) || 0 | number:'1.1-1'}}</ion-col>
+        <ion-col>{{(gameResults.skipsUsed / gameResults.timesPlayed) || 0 | number:'1.1-1'}}</ion-col>
       </ion-row>
       <ion-row>
         <ion-col>Max Perfect Streak</ion-col>

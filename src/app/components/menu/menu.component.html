@@ -5,6 +5,7 @@
       <ion-item (click)="menu.close()" [routerLink]="['profile']" *ngIf="authenticated">My Profile</ion-item>
       <ion-item (click)="menu.close()" [routerLink]="['leaderboard']" *ngIf="authenticated">Leaderboard</ion-item>
       <ion-item (click)="claim()" *ngIf="!authenticated" detail button>Create Account</ion-item>
+      <ion-item (click)="follow()" detail button>Follow</ion-item>
       <ion-item (click)="login()" *ngIf="!authenticated" detail button>Log In</ion-item>
       <ion-item (click)="logout()" *ngIf="authenticated" detail button>Logout</ion-item>
     </ion-list>

@@ -186,7 +186,7 @@ export class ProfilePage implements OnInit {
   async goToLeaderboard() {
     if (this.auth.currentUser.email === null) {
       const alertPopup = await this.alertCtrl.create({
-        header: 'Login or create an account to see how you rank against friends and save your stats wherever you Sqram! ',
+        header: 'Log In or create an account to see how you rank against friends and save your stats wherever you Sqram! ',
         buttons: [
           {
             text: 'Create Account',

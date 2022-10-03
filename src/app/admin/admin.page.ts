@@ -3,10 +3,13 @@ import {
   Auth,
   signInWithEmailAndPassword,
 } from '@angular/fire/auth';
-import { Firestore, query, where, collection, getDocs, updateDoc, doc, addDoc } from '@angular/fire/firestore';
+import { Firestore, query, where, collection, getDocs, updateDoc, doc, addDoc, collectionData } from '@angular/fire/firestore';
 import { Word } from '../classes/word';
 import * as dayjs from 'dayjs';
+import * as utc from 'dayjs/plugin/utc';
+
 import { AlertController, ItemReorderEventDetail } from '@ionic/angular';
+dayjs.extend(utc);
 
 @Component({
   selector: 'app-admin',
@@ -19,13 +22,20 @@ export class AdminPage implements OnInit {
   username: string;
   password: string;
   loggedIn: boolean = false;
-  chosenDate: string = new Date().toISOString();
+  chosenDate: string =dayjs(new Date()).utc().toISOString();
   words: Array<Word> = [];
   activeDoc: string;
+  view: string = 'words';
+  statWords: Array<any> = [];
+  statChosenDate: string = dayjs(new Date()).utc().toISOString();
+  activeStats;
+  activeGames;
   constructor(private auth: Auth, private firestore: Firestore, private alertCtrl: AlertController) { }
 
   ngOnInit() {
     this.getWords();
+    this.getStats();
+    //this.getActiveGames();
   }
 
   async getWords() {
@@ -34,7 +44,7 @@ export class AdminPage implements OnInit {
       this.firestore,
       'words',
     );
-    let q = query(ref, where("date", '==', dayjs(this.chosenDate).format('MM/DD/YY')));
+    let q = query(ref, where("date", '==', dayjs(this.chosenDate).utc().format('MM/DD/YY')));
     const docs = await getDocs(q);
     let words = [];
     if (docs.size == 0) {
@@ -61,6 +71,53 @@ export class AdminPage implements OnInit {
         this.words = words;
       })
     }
+  }
+
+  async getStats() {
+    const docs = await getDocs(collection(this.firestore, "words"));
+    docs.forEach((doc) => {
+      this.statWords.push(doc.data());
+    })
+
+    for (let i = 0; i < this.statWords.length; i++) {
+      let date = dayjs(this.statChosenDate).utc().format('MM/DD/YY');
+      if (this.statWords[i].date === date) {
+        this.activeStats = this.statWords[i].stats;
+        break;
+      }
+    }
+    console.log(this.activeStats);
+    this.calculateStats();
+  }
+
+  async getActiveGames() {
+    let ref = collection(
+      this.firestore,
+      'users',
+    );
+    let q = query(ref, where("active", '==', true));
+    const docs = await collectionData(q);
+    docs.subscribe((data) => {
+      let count = 0;
+      let today = dayjs().utc();
+      console.log()
+      data.forEach((d) => {
+        let gameDate = dayjs(d.lastPlayed).utc();
+        if (today.isSame(gameDate, 'day')) {
+          console.log(today.get('hour'));
+          console.log(gameDate.get('hour'));
+          console.log(today.diff(gameDate, 'hours'));
+          count++;
+        }
+      })
+
+      this.activeGames = count;
+    })
+  }
+
+  calculateStats() {
+    console.log(this.words);
+    
   }
 
   async login() {
@@ -121,8 +178,17 @@ export class AdminPage implements OnInit {
     ev.detail.complete();
   }
 
-  dateChanged() {
-    this.getWords();
+  async dateChanged() {
+    this.statChosenDate = this.chosenDate;
+
+    await this.getWords();
+    await this.getStats();
+  }
+
+  async dateChangedStat() {
+    this.chosenDate = this.statChosenDate;
+    await this.getWords();
+    await this.getStats();
   }
 
   async delete(index) {

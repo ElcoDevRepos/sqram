@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'scramble',
+  appName: 'sqram',
   webDir: 'www',
   bundledWebRuntime: false
 };

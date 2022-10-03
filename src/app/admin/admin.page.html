@@ -22,7 +22,15 @@
     </ion-card-content>
   </ion-card>
 
-  <div class="words-container">
+  <ion-segment value="words" *ngIf="loggedIn" [(ngModel)]="view">
+    <ion-segment-button value="words">
+      <ion-label>Words</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="stats">
+      <ion-label>Stats</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <div class="words-container" *ngIf="view === 'words'">
     <ion-card *ngIf="loggedIn" class="picker-card">
       <ion-card-header>
         <ion-card-subtitle>
@@ -48,6 +56,8 @@
 
     <ion-card *ngIf="loggedIn" class="word-card">
       <ion-card-header>
+        <ion-card-title>
+        </ion-card-title>
         <ion-card-subtitle>
           Chosen Days Words
         </ion-card-subtitle>
@@ -69,5 +79,67 @@
       </ion-card-content>
     </ion-card>
   </div>
-
-</ion-content>
+  <div class="words-container" *ngIf="view === 'stats'">
+    <ion-card *ngIf="loggedIn" class="picker-card">
+      <ion-card-header>
+        <ion-card-subtitle>
+          Add Some Words
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-datetime presentation="date" [(ngModel)]="statChosenDate" class="datepicker" (ionChange)="dateChangedStat()"></ion-datetime>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngIf="loggedIn" class="word-card">
+      <ion-card-header>
+        <ion-card-subtitle>
+          Date's Stats
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <span *ngIf="!activeStats">No Stats Available</span>
+        <span *ngIf="activeStats">
+          <ion-list lines="none">
+            <ion-item-divider>
+              <ion-label>
+                Stats
+              </ion-label>
+            </ion-item-divider>
+            <ion-item>Best Perfect Time: {{activeStats.bestPerfectTime}}s</ion-item>
+            <ion-item>Average Hints per Day: {{(activeStats.hintsUsed / activeStats.totalGamesPlayed) | number : '1.0-1'}}</ion-item>
+            <ion-item>Average Skips per Day: {{(activeStats.skipsUsed / activeStats.totalGamesPlayed) | number : '1.0-1'}}</ion-item>
+            <ion-item>Total Number of Games Played Today: {{activeStats.totalGamesPlayed}}</ion-item>
+            <ion-item>Average Solve Time Per Words: {{activeStats.solveTimePerWord || 0 | number : '1.0-2'}}s</ion-item>
+            <ion-item>Average Time to Complete: {{activeStats.averageTimeToComplete || 0 | number : '1.0-2'}}s</ion-item>
+            <ion-item>Average Time to Perfect: {{activeStats.averageTimeToPerfect || 0 | number : '1.0-2'}}s</ion-item>
+            <ion-item-divider>
+              <ion-label>
+                Scores
+              </ion-label>
+            </ion-item-divider>
+            <ion-item>Perfects: {{activeStats.scores[11]}}</ion-item>
+            <ion-item>10's: {{activeStats.scores[10]}}</ion-item>
+            <ion-item>9's: {{activeStats.scores[9]}}</ion-item>
+            <ion-item>8's: {{activeStats.scores[8]}}</ion-item>
+            <ion-item>7's: {{activeStats.scores[7]}}</ion-item>
+            <ion-item>6's: {{activeStats.scores[6]}}</ion-item>
+            <ion-item>5's: {{activeStats.scores[5]}}</ion-item>
+            <ion-item>4's: {{activeStats.scores[4]}}</ion-item>
+            <ion-item>3's: {{activeStats.scores[3]}}</ion-item>
+            <ion-item>2's: {{activeStats.scores[2]}}</ion-item>
+            <ion-item>1's: {{activeStats.scores[1]}}</ion-item>
+            <ion-item>0's: {{activeStats.scores[0]}}</ion-item>
+            <ion-item-divider>
+              <ion-label>
+                Word Stats
+              </ion-label>
+            </ion-item-divider>
+            <ion-item *ngFor="let item of words; let i = index">
+              {{words[i].text}}: Hints - {{activeStats.wordsHinted[i]}}, Skips - {{activeStats.wordsSkipped[i]}}, Misses - {{activeStats.wordsNotSolved[i]}}
+            </ion-item>
+          </ion-list>
+        </span>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  

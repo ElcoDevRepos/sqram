@@ -5,10 +5,45 @@ admin.initializeApp();
 const db = admin.firestore();
 
 exports.setToday = functions.pubsub.schedule("0 19 * * *").timeZone("America/Chicago").onRun(async (context) => {
+    let puzzleDoc = await db.collection('today').doc('5lhhN8UFP7KU6DKgIpHr').get();
+    let yesterday = puzzleDoc.data().puzzle || 0;
+    let newPuzzle = parseInt(yesterday) + 1;
     db.collection('today').doc('5lhhN8UFP7KU6DKgIpHr').update({
-        today: new Date().toUTCString()
+        today: new Date().toUTCString(),
+        puzzle: newPuzzle
     })
 });
+
+exports.resetStats = functions.pubsub.schedule("0 19 * * *").timeZone("America/Chicago").onRun(async (context) => {
+    let usersCol = await db.collection('users').get();
+    let promises = [];
+    usersCol.forEach((doc) => {
+            promises.push(
+                db.collection('users').doc(doc.id).update({
+                    bestTime: 0,
+                    hintsUsed: 0,
+                    skipsUsed: 0,
+                    stats: {
+                        completionRate: 0,
+                        gamesWon: 0,
+                        maxPerfectStreak: 0,
+                        perfectStreaks: 0,
+                        perfect: 0,
+                        tens: 0,
+                        timePerWord: 0,
+                        timeToComplete: 0,
+                        wordSolveRate: 0
+                    },
+                    statsBackup: {},
+                    timesPlayed: 0,
+                    totalNumberOfWordsSolved: 0
+                })
+            )
+    })
+
+    return Promise.all(promises);
+});
+
 
 exports.eraseInactiveAccounts = functions.pubsub.schedule("0 0 1 */1 *").timeZone("America/Chicago").onRun(async (context) => {
     function calculateDaysBetweenDates(date1, date2) {

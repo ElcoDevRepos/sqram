@@ -114,6 +114,10 @@ export class MenuComponent implements OnInit {
     signOut(this.auth).then(() => window.location.reload());
   }
 
+  async follow() {
+    window.open("https://twitter.com/sqramdotcom", '_blank')
+  }
+
   async showToast(msg) {
     let toast = await this.toastCtrl.create({
       message: msg,
