@@ -21,13 +21,12 @@ export class AdminPage implements OnInit {
   hint: string;
   username: string;
   password: string;
-  loggedIn: boolean = false;
-  chosenDate: string =dayjs(new Date()).utc().toISOString();
+  loggedIn: boolean = true;
+  chosenDate: string =dayjs(new Date().toISOString()).utc().toISOString();
   words: Array<Word> = [];
   activeDoc: string;
   view: string = 'words';
   statWords: Array<any> = [];
-  statChosenDate: string = dayjs(new Date()).utc().toISOString();
   activeStats;
   activeGames;
   constructor(private auth: Auth, private firestore: Firestore, private alertCtrl: AlertController) { }
@@ -44,7 +43,7 @@ export class AdminPage implements OnInit {
       this.firestore,
       'words',
     );
-    let q = query(ref, where("date", '==', dayjs(this.chosenDate).utc().format('MM/DD/YY')));
+    let q = query(ref, where("date", '==', dayjs(new Date(this.chosenDate).toISOString()).format('MM/DD/YY')));
     const docs = await getDocs(q);
     let words = [];
     if (docs.size == 0) {
@@ -80,7 +79,7 @@ export class AdminPage implements OnInit {
     })
 
     for (let i = 0; i < this.statWords.length; i++) {
-      let date = dayjs(this.statChosenDate).utc().format('MM/DD/YY');
+      let date = dayjs(this.chosenDate).utc().format('MM/DD/YY');
       if (this.statWords[i].date === date) {
         this.activeStats = this.statWords[i].stats;
         break;
@@ -179,14 +178,11 @@ export class AdminPage implements OnInit {
   }
 
   async dateChanged() {
-    this.statChosenDate = this.chosenDate;
-
     await this.getWords();
     await this.getStats();
   }
 
   async dateChangedStat() {
-    this.chosenDate = this.statChosenDate;
     await this.getWords();
     await this.getStats();
   }

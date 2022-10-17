@@ -147,13 +147,49 @@
       </ion-col>
     </ion-row>
 
-    <div id="motto" *ngIf="!haventPlayedToday()">
-      Unsqramble ten words <br>
-      before time runs out
-    </div>
+    <span id="home-screen">
+      <div id="motto" *ngIf="!haventPlayedToday()">
+        Unsqramble today's words <br>
+        before time runs out
+      </div>
 
-    <img src="../../assets/images/Go!.svg" (click)="startGame()" *ngIf="!haventPlayedToday()" width="75px"
-      style="margin-top: 215px" />
+      <div id="buttons-container-home" *ngIf="!haventPlayedToday()">
+        <ion-grid>
+          <ion-row>
+            <ion-button style="background: url('../../assets/images/Hint-First-Letter.svg'); background-size:cover"
+              color="dark" fill="clear" class="btn" [disabled]="!getFirstLetter || lockedIndexes.includes(0)">
+            </ion-button>
+            <ion-button style="background: url('../../assets/images/Hint-Random-Letter.svg'); background-size:cover"
+              color="dark" fill="clear" [disabled]="!getRandomLetter" class="btn">
+            </ion-button>
+            <ion-button style="background: url('../../assets/images/Shuffle.svg'); background-size:cover" color="dark"
+              fill="clear" class="btn">
+            </ion-button>
+            <ion-button color="dark" fill="clear" class="btn"
+              [disabled]="((!canSkip || activeWord === words.length - 1) && skippedWords.length === 0) || isSkipped(activeWord) || skipsAllowed == 0"
+              style="background: url('../../assets/images/Skip.svg'); background-size:cover">
+            </ion-button>
+          </ion-row>
+        </ion-grid>
+        <span style="text-align: center; display: block; margin: auto; width: 70%;">
+          Use assists to reveal letters, <br> shuffle tiles, or skip words
+        </span>
+
+        <img src="../../assets/images/Perfects.svg" width='110px'
+          style="margin: auto; display: block; padding-top: 15px;" />
+
+        <span style="text-align: center; display: block; margin: auto; width: 100%;">
+          Score a PERFECT! if you solve ten
+          words <br> without using letter revealing assists
+        </span>
+      </div>
+
+      <img src="../../assets/images/Go!.svg" (click)="startGame()" *ngIf="!haventPlayedToday()" width="75px"
+      style="display: block; margin: auto; margin-top: 45px;" id="go-btn"
+        />
+    </span><!--style="position: absolute; left: 50%; transform: translate(-50%, -50%); bottom: 5%" -->
+
+
   </div>
 </ion-content>
 <ion-content *ngIf="loading">

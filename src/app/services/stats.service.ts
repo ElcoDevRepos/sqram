@@ -37,7 +37,7 @@ export class StatsService {
         wordsSkipped: [0,0,0,0,0,0,0,0,0,0,0],
         wordsHinted: [0,0,0,0,0,0,0,0,0,0,0],
         wordsNotSolved: [0,0,0,0,0,0,0,0,0,0,0],
-        bestPerfectTime: game.wasTodayPerfect ? game.timeForPerfect || 0 : 0,
+        bestPerfectTime: game.wasTodayPerfect ? game.timeForPerfect || 999 : 999,
         averageTimeToComplete: game.isTen ? game.timeToComplete || 0 : 0,
         averageTimeToPerfect: game.wasTodayPerfect ? game.timeForPerfect || 0 : 0
       };
@@ -69,7 +69,7 @@ export class StatsService {
       for (let i = 0; i < game.wordsNotSolved.length; i++) {
         todaysWordDoc.stats.wordsNotSolved[game.wordsNotSolved[i]] = 1;
       }
-      if (game.wasTodayPerfect && game.timeForPerfect < todaysWordDoc.stats.bestPerfectTime && game.timeForPerfect > 0) {
+      if (game.wasTodayPerfect && (game.timeForPerfect < todaysWordDoc.stats.bestPerfectTime) && game.timeForPerfect > 0) {
         todaysWordDoc.stats.bestPerfectTime = game.timeForPerfect;
       }
     }

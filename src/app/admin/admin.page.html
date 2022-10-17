@@ -87,7 +87,7 @@
         </ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
-        <ion-datetime presentation="date" [(ngModel)]="statChosenDate" class="datepicker" (ionChange)="dateChangedStat()"></ion-datetime>
+        <ion-datetime presentation="date" [(ngModel)]="chosenDate" class="datepicker" (ionChange)="dateChangedStat()"></ion-datetime>
       </ion-card-content>
     </ion-card>
     <ion-card *ngIf="loggedIn" class="word-card">
@@ -105,7 +105,7 @@
                 Stats
               </ion-label>
             </ion-item-divider>
-            <ion-item>Best Perfect Time: {{activeStats.bestPerfectTime}}s</ion-item>
+            <ion-item>Best Perfect Time: <span *ngIf="activeStats.bestPerfectTime !== 999">{{activeStats.bestPerfectTime}}s</span><span *ngIf="activeStats.bestPerfectTime === 999">Not Available</span></ion-item>
             <ion-item>Average Hints per Day: {{(activeStats.hintsUsed / activeStats.totalGamesPlayed) | number : '1.0-1'}}</ion-item>
             <ion-item>Average Skips per Day: {{(activeStats.skipsUsed / activeStats.totalGamesPlayed) | number : '1.0-1'}}</ion-item>
             <ion-item>Total Number of Games Played Today: {{activeStats.totalGamesPlayed}}</ion-item>
