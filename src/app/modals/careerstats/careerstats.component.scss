@@ -47,8 +47,11 @@
       #stat {
         text-align: center;
         .number {
-            font-size: 30px;
+            font-size: 25px;
             font-weight: bold;
+        }
+        .label {
+          font-size: 14px;
         }
       }
   }
