@@ -401,7 +401,6 @@ export class HomePage {
 
         // If we have solved all the words, stop everything and show the win screen
         if (this.solvedWords.length === this.words.length && !this.solvedWords.includes(undefined)) {
-          this.addTime(this.words[this.activeWord].text.length);
           this.setSaveState();
           this.endGame();
           clearInterval(this.timerInterval);
@@ -424,6 +423,7 @@ export class HomePage {
           this.moveToNextRound();
           // If we have skipped any words, go back to them at this point
         } else if (this.skippedWords.length > 0) {
+          this.addTime(this.words[this.activeWord].text.length);
           this.activeWord = this.skippedWords[0];
           this.finalWord = [];
           this.letterArray = [];
