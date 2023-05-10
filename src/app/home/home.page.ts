@@ -401,6 +401,7 @@ export class HomePage {
 
         // If we have solved all the words, stop everything and show the win screen
         if (this.solvedWords.length === this.words.length && !this.solvedWords.includes(undefined)) {
+          this.addTime(this.words[this.activeWord].text.length);
           this.setSaveState();
           this.endGame();
           clearInterval(this.timerInterval);
