@@ -424,6 +424,7 @@ export class HomePage {
           this.moveToNextRound();
           // If we have skipped any words, go back to them at this point
         } else if (this.skippedWords.length > 0) {
+          this.addTime(this.words[this.activeWord].text.length);
           this.activeWord = this.skippedWords[0];
           this.finalWord = [];
           this.letterArray = [];
