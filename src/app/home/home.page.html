@@ -59,7 +59,7 @@
     </div>
   </div>
 </ion-content>
-<ion-content *ngIf="!gameResults.active && !loading" id="scrollable" style="background: #d1d2d3;">
+<ion-content *ngIf="!gameResults.active && !loading" style="background: #d1d2d3;" scroll="true">
   <div id="game-board">
     <ion-row id="menu-bar">
       <ion-col size="1">
@@ -146,6 +146,168 @@
           style="margin-top: 5px" />
       </ion-col>
     </ion-row>
+
+    <!--TODAYS TOP 10-->
+    <div class="horiz-line"></div>
+    <span id="today">TODAY'S TOP 10</span>
+
+    <ion-card style="width: 95%; text-align: center;">
+      <ion-row>
+        <ion-col size="3">
+          PLAYER
+        </ion-col>
+        <ion-col size="3">
+          <!--KEEP EMPTY-->
+        </ion-col>
+        <ion-col size="3">
+          TTC
+        </ion-col>
+        <ion-col size="3">
+          SPW
+        </ion-col>
+      </ion-row>
+      <ion-row class="todays-top-10"> <!--ADD ngFor HERE-->
+        <ion-col size="3">
+          John23
+        </ion-col>
+        <ion-col size="3">
+          PERFECT!
+        </ion-col>
+        <ion-col size="3">
+          33.6s
+        </ion-col>
+        <ion-col size="3">
+          3.4s
+        </ion-col>
+      </ion-row>
+      <ion-row class="todays-top-10"> <!--ADD ngFor HERE-->
+        <ion-col size="3">
+          MikeJJ
+        </ion-col>
+        <ion-col size="3">
+          PERFECT!
+        </ion-col>
+        <ion-col size="3">
+          34.1s
+        </ion-col>
+        <ion-col size="3">
+          3.4s
+        </ion-col>
+      </ion-row>
+      <ion-row class="todays-top-10"> <!--ADD ngFor HERE-->
+        <ion-col size="3">
+          Adam30R
+        </ion-col>
+        <ion-col size="3">
+          PERFECT!
+        </ion-col>
+        <ion-col size="3">
+          39s
+        </ion-col>
+        <ion-col size="3">
+          3.9s
+        </ion-col>
+      </ion-row>
+      <ion-row class="todays-top-10"> <!--ADD ngFor HERE-->
+        <ion-col size="3">
+          EricS
+        </ion-col>
+        <ion-col size="3">
+          PERFECT!
+        </ion-col>
+        <ion-col size="3">
+          56.6s
+        </ion-col>
+        <ion-col size="3">
+          5.7s
+        </ion-col>
+      </ion-row>
+      <ion-row class="todays-top-10"> <!--ADD ngFor HERE-->
+        <ion-col size="3">
+          Wojac00
+        </ion-col>
+        <ion-col size="3">
+          PERFECT!
+        </ion-col>
+        <ion-col size="3">
+          61.8s
+        </ion-col>
+        <ion-col size="3">
+          6.2s
+        </ion-col>
+      </ion-row>
+      <ion-row class="todays-top-10"> <!--ADD ngFor HERE-->
+        <ion-col size="3">
+          Ligma1
+        </ion-col>
+        <ion-col size="3">
+          PERFECT!
+        </ion-col>
+        <ion-col size="3">
+          87.2s
+        </ion-col>
+        <ion-col size="3">
+          8.7s
+        </ion-col>
+      </ion-row>
+      <ion-row class="todays-top-10"> <!--ADD ngFor HERE-->
+        <ion-col size="3">
+          Wendy09
+        </ion-col>
+        <ion-col size="3">
+          10/10
+        </ion-col>
+        <ion-col size="3">
+          42.3s
+        </ion-col>
+        <ion-col size="3">
+          4.2s
+        </ion-col>
+      </ion-row>
+      <ion-row class="todays-top-10"> <!--ADD ngFor HERE-->
+        <ion-col size="3">
+          PablO
+        </ion-col>
+        <ion-col size="3">
+          10/10
+        </ion-col>
+        <ion-col size="3">
+          58s
+        </ion-col>
+        <ion-col size="3">
+          5.8s
+        </ion-col>
+      </ion-row>
+      <ion-row class="todays-top-10"> <!--ADD ngFor HERE-->
+        <ion-col size="3">
+          AxelE
+        </ion-col>
+        <ion-col size="3">
+          9/10
+        </ion-col>
+        <ion-col size="3">
+          DNF
+        </ion-col>
+        <ion-col size="3">
+          4.8s
+        </ion-col>
+      </ion-row>
+      <ion-row class="todays-top-10"> <!--ADD ngFor HERE-->
+        <ion-col size="3">
+          Samz
+        </ion-col>
+        <ion-col size="3">
+          7/10
+        </ion-col>
+        <ion-col size="3">
+          DNF
+        </ion-col>
+        <ion-col size="3">
+          3.9s
+        </ion-col>
+      </ion-row>
+    </ion-card>
+    <div class="horiz-line"></div>
 
     <span id="home-screen">
       <div id="motto" *ngIf="!haventPlayedToday()">
