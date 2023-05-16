@@ -71,7 +71,7 @@
     </div>
   </div>
 </ion-content>
-<ion-content *ngIf="!gameResults.active && !loading" id="scrollable" style="background: #d1d2d3;">
+<ion-content *ngIf="!gameResults.active && !loading" style="background: #d1d2d3;" scroll="true">
   <div id="game-container">
     <div id="ad-sidebar-left">
       <ng-adsense [adSlot]="8185452401"></ng-adsense>
@@ -146,32 +146,28 @@
             <p *ngIf="solvedWords.length !== words.length || (solvedWords.includes(null) || solvedWords.includes(undefined))"
               style="color: red">DNF</p>
 
-            <p>{{secondsPerWord | average}}s</p>
-          </ion-col>
-        </ion-row>
+          <p>{{secondsPerWord | average}}s</p>
+        </ion-col>
+      </ion-row>
+    </div>
+    <ion-row style="display: flex; align-items: center;">
+      <ion-col style="margin: 10px;">
+        <span id="next-game" *ngIf="words.length > 0 && haventPlayedToday()">
+          <p style="font-weight: bold; margin: 0;">Next Sqram</p>
+          <p style="font-weight: bold; margin: 0; font-family: 'Roboto Mono', monospace;">{{timeUntil}}</p>
+        </span>
+      </ion-col>
+      <ion-col style="margin: 10px;" *ngIf="haventPlayedToday() && isStateToday()">
+        <img id="share-btn" src="../../assets/images/Share_Icon.svg" (click)="shareStats()" width="95px"
+          style="margin-top: 5px" />
+      </ion-col>
+    </ion-row>
+
+    <span id="home-screen">
+      <div id="motto" *ngIf="!haventPlayedToday()">
+        Unsqramble today's words <br>
+        before time runs out
       </div>
-      <ion-row style="display: flex; align-items: center;">
-        <ion-col style="margin: 10px;">
-          <span id="next-game" *ngIf="words.length > 0 && haventPlayedToday()">
-            <p style="font-weight: bold; margin: 0;">Next Sqram</p>
-            <p style="font-weight: bold; margin: 0; font-family: 'Roboto Mono', monospace;">{{timeUntil}}</p>
-          </span>
-        </ion-col>
-        <ion-col style="margin: 10px;" *ngIf="haventPlayedToday() && isStateToday()">
-          <img id="share-btn" src="../../assets/images/Share_Icon.svg" (click)="shareStats()" width="95px"
-            style="margin-top: 5px" />
-        </ion-col>
-      </ion-row>
-      <ion-row *ngIf="words.length > 0 && haventPlayedToday()">
-        <ion-col>
-          <app-kofi-btn></app-kofi-btn>
-        </ion-col>
-      </ion-row>
-      <span id="home-screen">
-        <div id="motto" *ngIf="!haventPlayedToday()">
-          Unsqramble today's words <br>
-          before time runs out
-        </div>
 
         <div id="buttons-container-home" *ngIf="!haventPlayedToday()">
           <ion-grid>
