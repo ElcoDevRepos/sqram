@@ -12,6 +12,8 @@ import { PipesPipe } from '../pipes.pipe';
 import { AveragePipe } from '../pipes/average.pipe';
 import { CumulatePipe } from '../pipes/cumulate.pipe';
 import { CareerstatsComponent } from '../modals/careerstats/careerstats.component';
+import { AdsenseModule } from 'ng2-adsense';
+import { KofiBtnComponent } from '../components/kofi-btn/kofi-btn.component';
 
 
 @NgModule({
@@ -19,8 +21,12 @@ import { CareerstatsComponent } from '../modals/careerstats/careerstats.componen
     CommonModule,
     FormsModule,
     IonicModule,
-    HomePageRoutingModule
+    HomePageRoutingModule,
+    AdsenseModule.forRoot({
+      adClient: 'ca-pub-7017056226718877',
+    })
   ],
-  declarations: [HomePage, FinalWordLetterComponent, ScrambleWordLetterComponent, ProgressIndicatorComponent, PipesPipe, AveragePipe, CumulatePipe, CareerstatsComponent]
+  declarations: [HomePage, FinalWordLetterComponent, ScrambleWordLetterComponent, ProgressIndicatorComponent,
+     PipesPipe, AveragePipe, CumulatePipe, CareerstatsComponent, KofiBtnComponent]
 })
 export class HomePageModule {}

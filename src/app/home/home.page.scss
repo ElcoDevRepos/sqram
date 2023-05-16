@@ -17,6 +17,20 @@ h1 {
 }
 
 @media (max-width: 500px) {
+  #ad-sidebar-left {
+    display: none;
+  }
+  #ad-sidebar-right {
+    display: none;
+  }
+  #mobile-ad-slot {
+    border: 1px solid black;
+    width: 350px;
+    height: 90px;
+    position: absolute;
+    bottom: 5px;
+    display: none;
+  }
   #game-board {
     display: flex;
     align-items: center;
@@ -39,6 +53,27 @@ h1 {
 }
 
 @media (min-width: 501px) {
+  #game-container {
+    display: flex;
+    flex-direction: row;
+  }
+  #ad-sidebar-left {
+    display: none;
+    width: 240px;
+    height: 720px;
+    border: 1px solid black;
+    margin:auto
+  }
+  #ad-sidebar-right {
+    display: none;
+    width: 240px;
+    height: 720px;
+    border: 1px solid black;
+    margin:auto
+  }
+  #mobile-ad-slot {
+    display: none;
+  }
   #game-board {
     display: flex;
     align-items: center;
