@@ -78,6 +78,14 @@ export class HomePage {
   finalRowComponents: Array<ScrambleWordLetterComponent> = [];
   letterRowComponents: Array<ScrambleWordLetterComponent> = [];
   hintUsedOnLastLetter = false;
+  todaysTop10: {
+    name: string,
+    score: string,
+    ttc: string,
+    spw: string,
+  }[] = [];
+
+
   constructor(private alertCtrl: AlertController, private firestore: Firestore, private auth: Auth, private modalCtrl: ModalController, private menu: MenuController,
     private router: Router, private platform: Platform, private toastCtrl: ToastController, private statsService: StatsService
   ) {
@@ -228,6 +236,7 @@ export class HomePage {
       }
     });
     await this.getSaveState();
+    this.getTodaysTop10();
   }
 
   async getSaveState() {
@@ -522,6 +531,84 @@ export class HomePage {
         this.gameOver();
       }
     }, 1000);
+  }
+
+  //Checks if the player made it into todays top 10
+  async checkIfTop10() {
+
+    //Get all the stats from players game
+    let score = this.getStatus();
+    let TTC : any;
+    if(this.solvedWords.length !== this.words.length || (this.solvedWords.includes(null) || this.solvedWords.includes(undefined))) {
+      TTC = 'DNF';
+    }
+    else TTC = this.secondsPerWord.reduce((acc, val) => acc + val, 0);
+    let SPW = this.secondsPerWord.reduce((acc, val) => acc + val, 0) / this.secondsPerWord.length;
+    console.log("user score: ", score, TTC, SPW);
+
+    //Check if user can be in todays top 10
+    let ref = collection(
+      this.firestore,
+      'words',
+    );
+    let q = query(ref, where("date", '==', dayjs().utc().format('MM/DD/YY')));
+    const docs = await getDocs(q);
+    docs.forEach(async d => {
+      const data = d.data();
+      let top10UID = [];
+      let top10Score = [];
+      let top10TTC = [];
+      let top10SPW = [];
+      for (let i = 0; i < data.todays_top_10.length; i++) {
+        
+      }
+    });
+  }
+
+  async getTodaysTop10() {
+    let ref = collection(
+      this.firestore,
+      'words',
+    );
+    let q = query(ref, where("date", '==', dayjs().utc().format('MM/DD/YY')));
+    const docs = await getDocs(q);
+    docs.forEach(async d => {
+      const data = d.data();
+      for (let i = 0; i < data.todays_top_10.length; i++) {
+
+        //Get name from uid
+        const uid : string = data.todays_top_10[i].uid;
+        let name = ''; 
+        const userDoc = await getDoc(doc(this.firestore, "users", uid));
+        if (userDoc.exists) {
+        const userData = userDoc.data();
+          if (userData) {
+            name = userData.name;
+          }
+        }
+
+        //Fix ttc
+        let ttc : string;
+        if(data.todays_top_10[i].ttc != 'DNF') {
+          let num : number = data.todays_top_10[i].ttc;
+          ttc = (num/1000).toString(10);
+          ttc = ttc + 's';
+        } else ttc = 'DNF'
+
+        //Fix spw
+        let spw = (data.todays_top_10[i].spw/1000).toString(10) + "s";
+
+        const s = {
+          name: name,
+          score: data.todays_top_10[i].score,
+          ttc: ttc,
+          spw: spw
+        };
+        this.todaysTop10.push(s);
+      }
+    });
+
+    console.log(this.todaysTop10);
   }
 
   /**
@@ -880,6 +967,7 @@ export class HomePage {
       this.gameResults.timesPlayed += 1;
     } else this.gameResults.timesPlayed = 1;
 
+    this.checkIfTop10();
 
     this.figureStats().then(() => {
       this.goToCareer();
