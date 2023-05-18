@@ -84,6 +84,7 @@ export class HomePage {
     ttc: string,
     spw: string,
   }[] = [];
+  isLoggedIn : any;
 
 
   constructor(private alertCtrl: AlertController, private firestore: Firestore, private auth: Auth, private modalCtrl: ModalController, private menu: MenuController,
@@ -93,11 +94,11 @@ export class HomePage {
   }
 
   async ngOnInit() {
-    const isLoggedIn: any = await new Promise((resolve: any, reject: any) =>
+    this.isLoggedIn = await new Promise((resolve: any, reject: any) =>
       this.auth.onAuthStateChanged((user: any) =>
         resolve(user), (e: any) => reject(e)));
 
-    if (!isLoggedIn) {
+    if (!this.isLoggedIn) {
       signInAnonymously(this.auth);
     }
 
@@ -538,11 +539,14 @@ export class HomePage {
 
     //Get all the stats from players game
     let score = this.getStatus();
+    if(score.includes('PERFECT!')) score = 'PERFECT!';
+
     let TTC : any;
     if(this.solvedWords.length !== this.words.length || (this.solvedWords.includes(null) || this.solvedWords.includes(undefined))) {
       TTC = 'DNF';
     }
     else TTC = this.secondsPerWord.reduce((acc, val) => acc + val, 0);
+    console.log(this.secondsPerWord);
     let SPW = this.secondsPerWord.reduce((acc, val) => acc + val, 0) / this.secondsPerWord.length;
     console.log("user score: ", score, TTC, SPW);
 
@@ -555,13 +559,94 @@ export class HomePage {
     const docs = await getDocs(q);
     docs.forEach(async d => {
       const data = d.data();
+
+      //Get all the info from current top 10
       let top10UID = [];
       let top10Score = [];
       let top10TTC = [];
       let top10SPW = [];
-      for (let i = 0; i < data.todays_top_10.length; i++) {
-        
+
+      //If todays top 10 is not empty
+      if(data.todays_top_10.length != 0) {
+        for (let i = 0; i < data.todays_top_10.length; i++) {
+          top10UID[i] = data.todays_top_10[i].uid;
+          top10Score[i] = data.todays_top_10[i].score;
+          top10TTC[i] = data.todays_top_10[i].ttc;
+          top10SPW[i] = data.todays_top_10[i].spw;
+        }
+
+        for (let i = 0; i < top10UID.length; i++) {
+          if(top10Score[i] == score) {
+            if(TTC < top10TTC[i]) {
+              top10UID.splice(i, 0, this.auth.currentUser.uid);
+              top10Score.splice(i, 0, score);
+              top10TTC.splice(i, 0, TTC);
+              top10SPW.splice(i, 0, SPW);
+              break;
+            }
+            else if ((i === top10UID.length - 1) && top10UID.length < 10) {
+              top10UID.push(this.auth.currentUser.uid);
+              top10Score.push(score);
+              top10TTC.push(TTC.toString(10));
+              top10SPW.push(SPW.toString(10));
+              break;
+            }
+          }
+          
+          else if(score == 'PERFECT!' && top10Score[i] != 'PERFECT!') {
+            top10UID.splice(i, 0, this.auth.currentUser.uid);
+            top10Score.splice(i, 0, score);
+            top10TTC.splice(i, 0, TTC);
+            top10SPW.splice(i, 0, SPW);
+            break;
+          }
+          else if(parseInt(top10Score[i].split("/")[0]) < parseInt(score.split("/")[0])) {
+            top10UID.splice(i, 0, this.auth.currentUser.uid);
+            top10Score.splice(i, 0, score);
+            top10TTC.splice(i, 0, TTC);
+            top10SPW.splice(i, 0, SPW);
+            break;
+          }
+          else if ((i === top10UID.length - 1) && top10UID.length < 10) {
+            top10UID.push(this.auth.currentUser.uid);
+            top10Score.push(score);
+            top10TTC.push(TTC.toString(10));
+            top10SPW.push(SPW.toString(10));
+            break;
+          }
+        }
       }
+
+      //If todays top 10 is empty
+      else {
+        top10UID.push(this.auth.currentUser.uid);
+        top10Score.push(score);
+        top10TTC.push(TTC.toString(10));
+        top10SPW.push(SPW.toString(10));
+      }
+
+      //Format and push data to Firestore
+      let formatTop10 = [];
+      top10UID = top10UID.slice(0, 10);
+      top10Score = top10Score.slice(0, 10);
+      top10TTC = top10TTC.slice(0, 10);
+      top10SPW = top10SPW.slice(0, 10);
+
+      for (let i = 0; i < top10UID.length; i++) {
+        let f = {
+          uid: top10UID[i],
+          score: top10Score[i],
+          ttc: top10TTC[i],
+          spw: top10SPW[i]
+        }
+        formatTop10.push(f);
+      }
+
+      await updateDoc(doc(this.firestore, 'words', d.id), {
+        todays_top_10: formatTop10
+      });
+
+
     });
   }
 
@@ -596,7 +681,7 @@ export class HomePage {
         } else ttc = 'DNF'
 
         //Fix spw
-        let spw = (data.todays_top_10[i].spw/1000).toString(10) + "s";
+        let spw = (data.todays_top_10[i].spw/1000).toFixed(1) + "s";
 
         const s = {
           name: name,
@@ -967,7 +1052,8 @@ export class HomePage {
       this.gameResults.timesPlayed += 1;
     } else this.gameResults.timesPlayed = 1;
 
-    this.checkIfTop10();
+    //Only see if user made it into todays top ten if he is logged in
+    if(this.isLoggedIn) await this.checkIfTop10();
 
     this.figureStats().then(() => {
       this.goToCareer();
