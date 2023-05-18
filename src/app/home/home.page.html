@@ -199,6 +199,12 @@
     </ion-card>
     <div class="horiz-line" *ngIf="haventPlayedToday()"></div>
 
+    <ion-row *ngIf="words.length > 0 && haventPlayedToday()">
+      <ion-col>
+        <app-kofi-btn></app-kofi-btn>
+      </ion-col>
+    </ion-row>
+
     <span id="home-screen">
       <div id="motto" *ngIf="!haventPlayedToday()">
         Unsqramble today's words <br>
