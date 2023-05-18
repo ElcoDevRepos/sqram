@@ -50,7 +50,8 @@ export class AdminPage implements OnInit {
       this.activeDoc = null;
       addDoc(collection(this.firestore, "words"), {
         date: dayjs(this.chosenDate).format('MM/DD/YY'),
-        words: []
+        words: [],
+        todays_top_10: []
       });
       this.getWords();
     } else {

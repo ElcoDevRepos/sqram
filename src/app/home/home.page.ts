@@ -568,7 +568,7 @@ export class HomePage {
       let top10SPW = [];
 
       //If todays top 10 is not empty
-      if(data.todays_top_10.length != 0) {
+      if(data.todays_top_10 && data.todays_top_10.length != 0) {
         for (let i = 0; i < data.todays_top_10.length; i++) {
           top10UID[i] = data.todays_top_10[i].uid;
           top10Score[i] = data.todays_top_10[i].score;
@@ -648,7 +648,7 @@ export class HomePage {
         }
         formatTop10.push(f);
       }
-
+      console.log(formatTop10);
       await updateDoc(doc(this.firestore, 'words', d.id), {
         todays_top_10: formatTop10
       });
@@ -1460,8 +1460,9 @@ export class HomePage {
         if (this.timer > (currentTime + amt)) {
           this.timer -= 1;
         } else {
-          document.getElementById('timer').style.color = "black"
           clearInterval(quickInterval);
+
+          document.getElementById('timer').style.color = "black"
         }
       }, 50)
     } else {
@@ -1473,8 +1474,9 @@ export class HomePage {
         if (this.timer < (currentTime + amt)) {
           this.timer += 1;
         } else {
-          document.getElementById('timer').style.color = "black"
           clearInterval(quickInterval);
+
+          document.getElementById('timer').style.color = "black"
         }
       }, 50)
     }
