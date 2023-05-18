@@ -84,7 +84,6 @@ export class HomePage {
     ttc: string,
     spw: string,
   }[] = [];
-  isLoggedIn : any;
 
 
   constructor(private alertCtrl: AlertController, private firestore: Firestore, private auth: Auth, private modalCtrl: ModalController, private menu: MenuController,
@@ -94,11 +93,11 @@ export class HomePage {
   }
 
   async ngOnInit() {
-    this.isLoggedIn = await new Promise((resolve: any, reject: any) =>
+    const isLoggedIn = await new Promise((resolve: any, reject: any) =>
       this.auth.onAuthStateChanged((user: any) =>
         resolve(user), (e: any) => reject(e)));
 
-    if (!this.isLoggedIn) {
+    if (!isLoggedIn) {
       signInAnonymously(this.auth);
     }
 
@@ -1062,7 +1061,7 @@ export class HomePage {
     } else this.gameResults.timesPlayed = 1;
 
     //Only see if user made it into todays top ten if he is logged in
-    if(this.isLoggedIn) await this.checkIfTop10();
+    if(this.auth.currentUser.email != null) await this.checkIfTop10();
 
     this.figureStats().then(() => {
       this.goToCareer();
