@@ -458,7 +458,8 @@ export class HomePage {
       } else if (solution.length === guess.length) {
         // A full word has been entered, but it isn't right; Reset
         for (let i = 0; i < this.finalRowComponents.length; i++) {
-          this.finalRowComponents[i].startWiggle();
+          if(this.finalRowComponents[i])
+            this.finalRowComponents[i].startWiggle();
         }
 
         setTimeout(() => {
