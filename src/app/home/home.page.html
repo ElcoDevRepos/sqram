@@ -148,16 +148,16 @@
     </ion-row>
 
     <!--TODAYS TOP 10-->
-    <div class="horiz-line"></div>
-    <span id="today">TODAY'S TOP 10</span>
+    <div class="horiz-line" *ngIf="haventPlayedToday()"></div>
+    <span id="today" *ngIf="haventPlayedToday()">TODAY'S TOP 10</span>
 
-    <ion-card style="width: 95%; text-align: center;">
+    <ion-card style="width: 95%; text-align: center;" *ngIf="haventPlayedToday()">
       <ion-row>
         <ion-col size="3">
           PLAYER
         </ion-col>
         <ion-col size="3">
-          <!--KEEP EMPTY-->
+          SCORE
         </ion-col>
         <ion-col size="3">
           TTC
@@ -181,7 +181,7 @@
         </ion-col>
       </ion-row>
     </ion-card>
-    <div class="horiz-line"></div>
+    <div class="horiz-line" *ngIf="haventPlayedToday()"></div>
 
     <span id="home-screen">
       <div id="motto" *ngIf="!haventPlayedToday()">
