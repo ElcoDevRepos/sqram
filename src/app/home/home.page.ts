@@ -538,6 +538,7 @@ export class HomePage {
   async checkIfTop10() {
 
     //Get all the stats from players game
+    let madeTop10 : boolean = false;
     let score = this.getStatus();
     if(score.includes('PERFECT!')) score = 'PERFECT!';
 
@@ -582,6 +583,7 @@ export class HomePage {
               top10Score.splice(i, 0, score);
               top10TTC.splice(i, 0, TTC);
               top10SPW.splice(i, 0, SPW);
+              madeTop10 = true;
               break;
             }
             else if ((i === top10UID.length - 1) && top10UID.length < 10) {
@@ -589,6 +591,7 @@ export class HomePage {
               top10Score.push(score);
               top10TTC.push(TTC.toString(10));
               top10SPW.push(SPW.toString(10));
+              madeTop10 = true;
               break;
             }
           }
@@ -598,6 +601,7 @@ export class HomePage {
             top10Score.splice(i, 0, score);
             top10TTC.splice(i, 0, TTC);
             top10SPW.splice(i, 0, SPW);
+            madeTop10 = true;
             break;
           }
           else if(parseInt(top10Score[i].split("/")[0]) < parseInt(score.split("/")[0])) {
@@ -605,6 +609,7 @@ export class HomePage {
             top10Score.splice(i, 0, score);
             top10TTC.splice(i, 0, TTC);
             top10SPW.splice(i, 0, SPW);
+            madeTop10 = true;
             break;
           }
           else if ((i === top10UID.length - 1) && top10UID.length < 10) {
@@ -612,6 +617,7 @@ export class HomePage {
             top10Score.push(score);
             top10TTC.push(TTC.toString(10));
             top10SPW.push(SPW.toString(10));
+            madeTop10 = true;
             break;
           }
         }
@@ -623,6 +629,7 @@ export class HomePage {
         top10Score.push(score);
         top10TTC.push(TTC.toString(10));
         top10SPW.push(SPW.toString(10));
+        madeTop10 = true;
       }
 
       //Format and push data to Firestore
@@ -645,12 +652,14 @@ export class HomePage {
       await updateDoc(doc(this.firestore, 'words', d.id), {
         todays_top_10: formatTop10
       });
-
-
     });
+
+    //When everything is done let's update the scoreboards
+    if(madeTop10) await this.getTodaysTop10();
   }
 
   async getTodaysTop10() {
+    this.todaysTop10 = [];
     let ref = collection(
       this.firestore,
       'words',
