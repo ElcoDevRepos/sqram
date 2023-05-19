@@ -327,3 +327,14 @@ button {
   font-weight: bold;
   color: black;
 }
+
+.todays-top-10-card {
+  width: 95%; 
+  text-align: center;
+}
+
+@media screen and (max-width: 350px) {
+  .todays-top-10-card ion-row ion-col {
+    font-size: 12px;
+  }
+}
