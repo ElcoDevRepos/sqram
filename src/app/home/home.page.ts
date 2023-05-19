@@ -586,6 +586,24 @@ export class HomePage {
               madeTop10 = true;
               break;
             }
+            else if(TTC == top10TTC[i]) {
+              if(SPW < top10SPW[i]) {
+                top10UID.splice(i, 0, this.auth.currentUser.uid);
+                top10Score.splice(i, 0, score);
+                top10TTC.splice(i, 0, TTC);
+                top10SPW.splice(i, 0, SPW);
+                madeTop10 = true;
+                break;
+              }
+              else if ((i === top10UID.length - 1) && top10UID.length < 10) {
+                top10UID.push(this.auth.currentUser.uid);
+                top10Score.push(score);
+                top10TTC.push(TTC.toString(10));
+                top10SPW.push(SPW.toString(10));
+                madeTop10 = true;
+                break;
+              }
+            }
             else if ((i === top10UID.length - 1) && top10UID.length < 10) {
               top10UID.push(this.auth.currentUser.uid);
               top10Score.push(score);
