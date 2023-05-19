@@ -165,39 +165,38 @@
 
     <!--TODAYS TOP 10-->
     <div class="horiz-line" *ngIf="haventPlayedToday()"></div>
-    <span id="today" *ngIf="haventPlayedToday()">TODAY'S TOP 10</span>
+    <span id="today" *ngIf="haventPlayedToday()">Today's Top 10</span>
 
-    <ion-card style="width: 95%; text-align: center;" *ngIf="haventPlayedToday()">
+    <ion-card class="todays-top-10-card" *ngIf="haventPlayedToday()">
       <ion-row>
-        <ion-col size="3">
+        <ion-col size="5">
           PLAYER
         </ion-col>
         <ion-col size="3">
           SCORE
         </ion-col>
-        <ion-col size="3">
+        <ion-col size="2">
           TTC
         </ion-col>
-        <ion-col size="3">
+        <ion-col size="2">
           SPW
         </ion-col>
       </ion-row>
       <ion-row class="todays-top-10" *ngFor="let player of todaysTop10;"> <!--ADD ngFor HERE-->
-        <ion-col size="3">
+        <ion-col size="5">
           {{ player.name }}
         </ion-col>
         <ion-col size="3">
           {{ player.score }}
         </ion-col>
-        <ion-col size="3">
+        <ion-col size="2">
           {{ player.ttc }}
         </ion-col>
-        <ion-col size="3">
+        <ion-col size="2">
           {{ player.spw }}
         </ion-col>
       </ion-row>
     </ion-card>
-    <div class="horiz-line" *ngIf="haventPlayedToday()"></div>
 
     <ion-row *ngIf="words.length > 0 && haventPlayedToday()">
       <ion-col>
