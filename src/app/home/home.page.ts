@@ -1538,11 +1538,20 @@ export class HomePage {
               return;
             }
 
-            addDoc(collection(this.firestore, 'users', this.auth.currentUser.uid, 'friends'), {
-              uid: uid,
-              name: name,
-            })
-            return true;
+            //Add friend
+            try {
+              addDoc(collection(this.firestore, 'users', this.auth.currentUser.uid, 'friends'), {
+                uid: uid,
+                name: name,
+              })
+              this.showToast('Added ' + name + ' as friend successfully!');
+              return true;
+
+            } catch (error) {
+              console.error('Error adding document:', error);
+              this.showToast('Something went wrong!');
+              return;
+            }
           }
         }
       ],
