@@ -5,7 +5,7 @@ import { Preferences } from '@capacitor/preferences';
 import * as dayjs from 'dayjs';
 import * as utc from 'dayjs/plugin/utc';
 
-import { Firestore, doc, query, where, collection, getDocs, setDoc, getDoc, updateDoc } from '@angular/fire/firestore';
+import { Firestore, doc, query, where, collection, getDocs, setDoc, getDoc, updateDoc, addDoc } from '@angular/fire/firestore';
 import { Auth, EmailAuthProvider, linkWithCredential, signInAnonymously, signInWithEmailAndPassword, signOut } from '@angular/fire/auth';
 import { Share } from '@capacitor/share';
 import { GameStats } from '../classes/game-stats';
@@ -711,6 +711,7 @@ export class HomePage {
         let spw = (data.todays_top_10[i].spw/1000).toFixed(1) + "s";
 
         const s = {
+          uid: uid,
           name: name,
           score: data.todays_top_10[i].score,
           ttc: ttc,
@@ -1507,6 +1508,47 @@ export class HomePage {
       duration: 2500
     });
     toast.present();
+  }
+
+  //Add a friend by clicking on user on top 10 list
+  async addTop10Friend(player : any) {
+    const alertPopup = await this.alertCtrl.create({
+      header: 'Add ' + player.name + ' as a friend',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'YES',
+          handler: async () => {
+            const name = player.name;
+            const uid = player.uid;
+
+            //Check if friend is already added
+            let docs = await getDocs(query(collection(this.firestore, 'users', this.auth.currentUser.uid, 'friends'), where('name', '==', name)));
+            if (!docs.empty) {
+              this.showToast("Friend Already Added!");
+              return;
+            }
+
+            //Make sure user doesn't add himself as friend
+            if (uid == this.auth.currentUser.uid) {
+              this.showToast("That's you!");
+              return;
+            }
+
+            addDoc(collection(this.firestore, 'users', this.auth.currentUser.uid, 'friends'), {
+              uid: uid,
+              name: name,
+            })
+            return true;
+          }
+        }
+      ],
+    });
+
+    await alertPopup.present();
   }
 
   /**
