@@ -182,7 +182,7 @@
           SPW
         </ion-col>
       </ion-row>
-      <ion-row class="todays-top-10" *ngFor="let player of todaysTop10;"> <!--ADD ngFor HERE-->
+      <ion-row class="todays-top-10" *ngFor="let player of todaysTop10;" (click)="addTop10Friend(player)"> <!--ADD ngFor HERE-->
         <ion-col size="5">
           {{ player.name }}
         </ion-col>
