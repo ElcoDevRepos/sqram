@@ -241,8 +241,12 @@
           </span>
         </div>
 
+        <span *ngIf="!authenticated && !haventPlayedToday()" style="text-align: center; display: block; margin: auto; width: 100%; margin-top: 35px;">
+          <span class="login-link" (click)="login()">Log in</span> or <span (click)="claim()" class="login-link">create an account</span> to rank your stats
+        </span>
+
         <img src="../../assets/images/Go!.svg" (click)="startGame()" *ngIf="!haventPlayedToday()" width="75px"
-          style="display: block; margin: auto; margin-top: 45px;" id="go-btn" />
+          style="display: block; margin: auto; margin-top: 10px;" id="go-btn" />
       </span><!--style="position: absolute; left: 50%; transform: translate(-50%, -50%); bottom: 5%" -->
       
       <div id="mobile-ad-slot">
