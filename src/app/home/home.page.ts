@@ -130,7 +130,16 @@ export class HomePage {
     let dbUser = await getDoc(doc(this.firestore, "users", this.auth.currentUser.uid));
     if (dbUser.exists()) {
       this.gameResults = dbUser.data() as GameStats;
-    } else {
+    } 
+    else {
+      // Create a query to search for documents with a matching email
+      const ref = collection(this.firestore, 'pending_reward');
+      const q = query(ref, where("email", "==", this.auth.currentUser.email));
+      const docs = await getDocs(q);
+
+      let purchased = false;
+      if(docs) purchased = true;
+
       setDoc(doc(this.firestore, 'users', this.auth.currentUser.uid), {
         uid: this.auth.currentUser.uid,
         timesPlayed: 0,
@@ -140,6 +149,7 @@ export class HomePage {
         lastPlayed: null,
         skipsUsed: 0,
         hintsUsed: 0,
+        purchased: purchased,
         stats: {
           tens: 0,
           timeToComplete: 0,

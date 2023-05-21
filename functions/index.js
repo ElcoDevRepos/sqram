@@ -3,6 +3,7 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 const db = admin.firestore();
+const defaultAuth = admin.auth();
 
 exports.setToday = functions.pubsub.schedule("0 19 * * *").timeZone("America/Chicago").onRun(async (context) => {
     let puzzleDoc = await db.collection('today').doc('5lhhN8UFP7KU6DKgIpHr').get();
@@ -133,3 +134,85 @@ exports.backupPlayerStats = functions.pubsub.schedule("0 19 * * *").timeZone("Am
 
     return Promise.all(promises);
 })
+
+exports.kofiPurchase = functions.https.onRequest((req, res) => {
+    const data = req.body;
+    
+    // Extract the email from the JSON data
+    const email = data.email;
+    if (!email) {
+        res.status(400).send('Email is missing in the JSON data');
+        return;
+    }
+    
+    //Get all users for Sqram
+    defaultAuth.listUsers()
+    .then((userRecords) => {
+        let matchedUser = null;
+
+        // Check for email match
+        userRecords.users.forEach((user) => {
+            if (user.email === email) {
+                matchedUser = user;
+            }
+        });
+
+        // User account found in Sqram
+        if (matchedUser) {
+            const uid = matchedUser.uid;
+
+            // Search the users collection for the user
+            const usersRef = db.collection('users');
+            const query = usersRef.where('uid', '==', uid).limit(1);
+
+            query.get()
+            .then((snapshot) => {
+                // No user found with the matching UID in Firestore
+                if (snapshot.empty) {
+                    res.send('No user found with the matching UID');
+                } 
+                // User found
+                else {
+                    snapshot.forEach((doc) => {
+                    const user = doc.data();
+
+                    // Add the "purchased" field to the user document and set it to true
+                    const updatedUser = { ...user, purchased: true };
+
+                    // Update the user document in Firestore
+                    const docRef = doc.ref;
+                    docRef.set(updatedUser)
+                        .then(() => {
+                            res.send('User found and updated');
+                        })
+                        .catch((error) => {
+                            res.status(500).send('Error updating user: ' + error);
+                        });
+                    });
+                }
+            })
+            .catch((error) => {
+                // An error occurred while searching for the user in the "users" collection
+                res.status(500).send('Error searching for user: ' + error);
+            });
+        }
+        // Found no email match among Sqram accounts
+        else {
+        const pendingRewardRef = db.collection('pending_reward');
+        
+        // Create a new document in the "pending_reward" collection with the email
+        pendingRewardRef.add({ email })
+            .then(() => {
+                res.send('Email added to pending rewards');
+            })
+            .catch((error) => {
+                res.status(500).send('Error adding email to pending rewards: ' + error);
+            });
+        }
+    })
+    .catch((error) => {
+      // An error occurred while retrieving the authenticated users
+      res.status(500).send('Error retrieving authenticated users: ' + error);
+    });
+});
+  
