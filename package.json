@@ -14,7 +14,8 @@
     "serve:ssr": "node dist/app/server/main.js",
     "build:ssr": "ng build && ng run app:server",
     "prerender": "ng run app:prerender",
-    "postinstall": "npm run build:ssr"
+    "postinstall": "npm run build:ssr",
+    "preinstall": "npm config set legacy-peer-deps true"
   },
   "engines": {
     "node": "18.x"
