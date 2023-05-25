@@ -18,7 +18,7 @@ import { MenuComponent } from './components/menu/menu.component';
 
 @NgModule({
   declarations: [AppComponent, MenuComponent],
-  imports: [BrowserModule, IonicModule.forRoot({ mode: 'ios' }), AppRoutingModule,
+  imports: [BrowserModule.withServerTransition({ appId: 'serverApp' }), IonicModule.forRoot({ mode: 'ios' }), AppRoutingModule,
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
