@@ -16,6 +16,9 @@
     "prerender": "ng run app:prerender",
     "postinstall": "npm run build:ssr"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^16.0.2",
