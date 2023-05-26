@@ -84,6 +84,7 @@ export class HomePage {
     ttc: string,
     spw: string,
   }[] = [];
+  authenticated : boolean = false;
 
 
   constructor(private alertCtrl: AlertController, private firestore: Firestore, private auth: Auth, private modalCtrl: ModalController, private menu: MenuController,
@@ -102,6 +103,7 @@ export class HomePage {
     }
 
     this.auth.onAuthStateChanged(async (a) => {
+      this.authenticated = this.auth.currentUser.email !== null;
       console.log(a);
       await this.getToday();
       await this.setupUser();
@@ -387,15 +389,45 @@ export class HomePage {
   }
 
   async startGame() {
-    this.gameResults.active = true;
-    this.gameResults.lastPlayed = this.serverDate;
 
-    await updateDoc(doc(this.firestore, 'users', this.gameResults.uid), {
-      active: true,
-      lastPlayed: this.gameResults.lastPlayed
-    });
+    if (this.auth.currentUser.email === null) {
+      const alertPopup = await this.alertCtrl.create({
+        header: 'Log In or Create an Account',
+        subHeader: 'Log In or create an account to see how you rank against other players and save your stats wherever you Sqram! ',
+        buttons: [
+          {
+            text: 'Create Account',
+            handler: (d) => {
+              this.claim()
+            }
+          },
+          {
+            text: 'Log In',
+            handler: (d) => {
+              this.login()
+            }
+          },
+          {
+            text: 'Play Anonymous',
+            handler: async (d) => {
+              this.gameResults.active = true;
+              this.gameResults.lastPlayed = this.serverDate;
 
-    this.startTimers();
+              await updateDoc(doc(this.firestore, 'users', this.gameResults.uid), {
+                active: true,
+                lastPlayed: this.gameResults.lastPlayed
+              });
+
+              this.startTimers();
+            }
+          }
+        ],
+      });
+
+      this.menu.close();
+      await alertPopup.present();
+      
+    }
   }
 
   async checkSolution(skipPush) {
