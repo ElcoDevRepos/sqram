@@ -427,7 +427,17 @@ export class HomePage {
       this.menu.close();
       await alertPopup.present();
       
-    }
+    } else {
+this.gameResults.active = true;
+              this.gameResults.lastPlayed = this.serverDate;
+
+              await updateDoc(doc(this.firestore, 'users', this.gameResults.uid), {
+                active: true,
+                lastPlayed: this.gameResults.lastPlayed
+              });
+
+              this.startTimers();
+}
   }
 
   async checkSolution(skipPush) {
