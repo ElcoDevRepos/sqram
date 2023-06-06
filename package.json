@@ -22,7 +22,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^16.0.2",
+    "@angular/animations": "^16.0.4",
     "@angular/common": "^15.2.9",
     "@angular/core": "^15.2.9",
     "@angular/fire": "^7.4.1",
@@ -43,7 +43,7 @@
     "@capacitor/share": "^4.0.1",
     "@capacitor/status-bar": "4.0.1",
     "@ionic/angular": "^6.1.9",
-    "@ionic/angular-server": "^7.0.8-dev.11684501790.1f105539",
+    "@ionic/angular-server": "^7.0.10",
     "@nguniversal/express-engine": "^15.2.1",
     "cordova-plugin-vibration": "^3.1.1",
     "dayjs": "^1.11.5",
