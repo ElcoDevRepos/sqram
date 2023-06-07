@@ -925,7 +925,6 @@ this.gameResults.active = true;
     if (isNaN(this.skippedSecondsPerWord[this.activeWord]))
       this.skippedSecondsPerWord[this.activeWord] = this.wordTimer;
     else this.skippedSecondsPerWord[this.activeWord] += this.wordTimer;
-    this.addTime(this.words[this.activeWord].text.length);
     this.wordTimer = 0;
     this.moveToNextRound();
   }
