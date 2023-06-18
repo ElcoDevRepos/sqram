@@ -41,23 +41,23 @@
         <ion-col>{{gameResults.stats.wordSolveRate || 0}}%</ion-col>
       </ion-row>-->
       <ion-row>
-        <ion-col>Games Played</ion-col>
+        <ion-col class="stats-title">Games Played</ion-col>
         <ion-col>{{gameResults.timesPlayed || 0}}</ion-col>
       </ion-row>
       <ion-row>
-        <ion-col>Solve per Word</ion-col>
+        <ion-col class="stats-title">Solve per Word</ion-col>
         <ion-col>{{gameResults.stats.timePerWord || 0 | number:'1.1-1'}}s</ion-col>
       </ion-row>
       <ion-row>
-        <ion-col>Hints per Game</ion-col>
+        <ion-col class="stats-title">Hints per Game</ion-col>
         <ion-col>{{(gameResults.hintsUsed / gameResults.timesPlayed) || 0 | number:'1.1-1'}}</ion-col>
       </ion-row>
       <ion-row>
-        <ion-col>Skips per Game</ion-col>
+        <ion-col class="stats-title">Skips per Game</ion-col>
         <ion-col>{{(gameResults.skipsUsed / gameResults.timesPlayed) || 0 | number:'1.1-1'}}</ion-col>
       </ion-row>
       <ion-row>
-        <ion-col>Max Perfect Streak</ion-col>
+        <ion-col class="stats-title">Max Perfect Streak</ion-col>
         <ion-col>{{gameResults.stats.maxPerfectStreaks || 0}}</ion-col>
       </ion-row>
     </div>
