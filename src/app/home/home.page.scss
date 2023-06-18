@@ -325,11 +325,17 @@ button {
 
 .todays-top-10 {
   height: 35px;
+  cursor: pointer;
 }
 
 .todays-top-10 ion-col {
   font-weight: bold;
   color: black;
+}
+
+.todays-top-10 .player-name:hover {
+  color: blue;
+
 }
 
 .todays-top-10-card {
