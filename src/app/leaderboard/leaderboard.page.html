@@ -97,7 +97,46 @@
         </ion-col>
       </ion-row>
     </ion-card>
-    <img src="../../assets/images/Friend_Icon.svg" (click)="addFriend()" width="140px" class="hover-effect"
-       />
+    <img src="../../assets/images/Friend_Icon.svg" (click)="addFriend()" width="140px" class="hover-effect"/>
+    
+    <div class="horiz-line" ></div>
+    <span class="top-100-title" >Today's Top 10</span>
+
+    <ion-card class="top-100-card">
+      <ion-row>
+        <ion-col>
+          RANK
+        </ion-col>
+        <ion-col>
+          PLAYER
+        </ion-col>
+        <ion-col>
+          TENS
+        </ion-col>
+        <ion-col>
+          COMP%
+        </ion-col>
+        <ion-col>
+          TTC
+        </ion-col>
+      </ion-row>
+      <ion-row class="top-100" *ngFor="let player of top100; let i = index"> <!--ADD ngFor HERE-->
+        <ion-col>
+          {{ i + 1 }}
+        </ion-col>
+        <ion-col class="player-name">
+          {{ player.name }}
+        </ion-col>
+        <ion-col>
+          {{ player.score }}
+        </ion-col>
+        <ion-col>
+          {{ player.compRate }}
+        </ion-col>
+        <ion-col>
+          {{ player.ttc }}
+        </ion-col>
+      </ion-row>
+    </ion-card>
   </div>
 </ion-content>
