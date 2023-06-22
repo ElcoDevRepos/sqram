@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { getDoc, doc, Firestore, collection, getDocs, addDoc } from '@angular/fire/firestore';
+import { getDoc, doc, Firestore, collection, getDocs, addDoc, orderBy, limit } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { query, where } from '@firebase/firestore';
 import { AlertController, MenuController, ToastController } from '@ionic/angular';
@@ -14,6 +14,7 @@ export class LeaderboardPage implements OnInit {
   friends: Array<any> = [];
   activeBoard: string = "perfects";
   boardType: string = "friends";
+  top100: Array<any> = [];
   constructor(public auth: Auth, private firestore: Firestore, private menu: MenuController, private alertCtrl: AlertController,
     private router: Router, private toastCtrl: ToastController) { }
 
@@ -22,6 +23,8 @@ export class LeaderboardPage implements OnInit {
 
       this.getFriends();
     });
+
+    this.getTop100();
   }
 
   segmentChanged(ev) {
@@ -179,6 +182,26 @@ export class LeaderboardPage implements OnInit {
       duration: 2500
     });
     toast.present();
+  }
+
+  async getTop100() {
+    let top100 = [];
+    let ref = collection(this.firestore, "users");
+    let q = query(ref, orderBy('stats.tens', 'desc'), limit(100));
+    const doc = await getDocs(q);
+    doc.forEach(user => {
+      top100.push({
+        "name": user.data().name || 'Anonymous',
+        "score": user.data().stats.tens,
+        "compRate": user.data().stats.completionRate,
+        "ttc": user.data().stats.timeToComplete
+      })
+    });
+    this.top100 = top100;
+
+    console.log("Unsorted Top 100");
+    console.log(top100);
+
   }
 
 }
