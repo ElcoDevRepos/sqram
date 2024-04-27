@@ -12,8 +12,71 @@ exports.setToday = functions.pubsub.schedule("0 19 * * *").timeZone("America/Chi
     db.collection('today').doc('5lhhN8UFP7KU6DKgIpHr').update({
         today: new Date().toUTCString(),
         puzzle: newPuzzle
-    })
+    });
+
+    // Check if there is a words doc for today
+    // Get today's date
+    const today = new Date();
+
+    // Get the month, day, and year from the date
+    // getMonth() returns 0 for January, 1 for February, etc., so add 1 to get the correct month number.
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    const year = today.getFullYear().toString().substr(-2);
+    const formattedDate = `${month}/${day}/${year}`;
+
+    // Query documents in "words" where date equals today's formatted date
+    const wordsCollection = db.collection('words');
+    const querySnapshot = await wordsCollection.where('date', '==', formattedDate).get();
+
+    // If no "words" doc was found, create a new one
+    if (querySnapshot.empty) {
+        let words = await get10RandomWords();
+        console.log(words);
+
+        const docData = {
+            words: words,
+            date: formattedDate,
+            todays_top_10: [],
+        };
+        // Add the document to the "words" collection
+        try {
+            const docRef = await wordsCollection.add(docData);
+            console.log('Document written with ID: ', docRef.id);
+        } catch (error) {
+            console.error('Error adding document: ', error);
+        }
+    } 
+    // If admin already created a "words" doc for today, do nothing
+    else {
+        console.log('Todays word doc exists, no need for further action');
+    }
 });
+
+async function get10RandomWords() {
+    const wordsArray = [];
+    while (wordsArray.length < 10) {
+        // Get a random document from the "words" collection
+        const snapshot = await db.collection('words').get();
+        const docs = snapshot.docs;
+
+        // Select a random document
+        const randomDoc = docs[Math.floor(Math.random() * docs.length)];
+
+        // Extract the words array from the document
+        const words = randomDoc.data().words; // Make sure 'words' is the correct field name
+
+        // Select a random word from the array
+        const randomWord = words[Math.floor(Math.random() * words.length)];
+
+        // Add the random word to the final array if it is not undefined
+        if(randomWord) {
+            randomWord.index = wordsArray.length;
+            wordsArray.push(randomWord);
+        }
+    }
+    return wordsArray;
+}
 
 exports.resetStats = functions.pubsub.schedule("0 19 * * *").timeZone("America/Chicago").onRun(async (context) => {
     let usersCol = await db.collection('users').get();
