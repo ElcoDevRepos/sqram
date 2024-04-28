@@ -16,6 +16,10 @@ h1 {
   font-weight: bolder;
 }
 
+#game-container {
+  height: 100vh;
+}
+
 @media (max-width: 500px) {
   #ad-sidebar-left {
     display: none;
