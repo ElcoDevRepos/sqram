@@ -14,6 +14,9 @@ exports.setToday = functions.pubsub.schedule("0 19 * * *").timeZone("America/Chi
         puzzle: newPuzzle
     });
 
+    // Set all users "active" flag in firestore doc to false
+    setUsersActiveToFalse();
+
     // Check if there is a words doc for today
     // Get today's date
     const today = new Date();
@@ -76,6 +79,28 @@ async function get10RandomWords() {
         }
     }
     return wordsArray;
+}
+
+async function setUsersActiveToFalse() {
+    console.log('Running function to set all users active flag to false...')
+    const usersRef = db.collection('users');
+    const snapshot = await usersRef.where('active', '==', true).get();
+  
+    if (snapshot.empty) {
+      console.log('No users with active flag true found.');
+      return;
+    }
+  
+    // Batch write to update all documents at once
+    const batch = db.batch();
+    snapshot.forEach(doc => {
+      const docRef = usersRef.doc(doc.id);
+      batch.update(docRef, { active: false });
+    });
+  
+    // Commit the batch
+    await batch.commit();
+    console.log('All active users active flags has been set to false.');
 }
 
 exports.resetStats = functions.pubsub.schedule("0 19 * * *").timeZone("America/Chicago").onRun(async (context) => {
