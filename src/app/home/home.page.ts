@@ -144,12 +144,16 @@ export class HomePage {
       if(docs) purchased = true;
 
       // Generate unique username for anonymous player
-      const uniqueUsername: string = uniqueNamesGenerator({
-        dictionaries: [adjectives, animals],
-        separator: '',
-        style: 'capital',
-        length: 2
-      });
+      let uniqueUsername: string = '';
+      // Make sure random generated username does not exceed string length of 10
+      while(uniqueUsername.length > 10 || uniqueUsername.length == 0) {
+        uniqueUsername = uniqueNamesGenerator({
+          dictionaries: [adjectives, animals],
+          separator: '',
+          style: 'capital',
+          length: 2
+        });
+      }
       await updateProfile(this.auth.currentUser, {displayName: uniqueUsername});
 
       setDoc(doc(this.firestore, 'users', this.auth.currentUser.uid), {
