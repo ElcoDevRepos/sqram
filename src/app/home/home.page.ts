@@ -18,6 +18,7 @@ import { ScrambleWordLetterComponent } from '../components/scramble-word-letter/
 import { Clipboard } from '@capacitor/clipboard';
 import { updateProfile } from '@firebase/auth';
 import { StatsService } from '../services/stats.service';
+import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
 
 dayjs.extend(utc);
 @Component({
@@ -142,8 +143,18 @@ export class HomePage {
       let purchased = false;
       if(docs) purchased = true;
 
+      // Generate unique username for anonymous player
+      const uniqueUsername: string = uniqueNamesGenerator({
+        dictionaries: [adjectives, animals],
+        separator: '',
+        style: 'capital',
+        length: 2
+      });
+      await updateProfile(this.auth.currentUser, {displayName: uniqueUsername});
+
       setDoc(doc(this.firestore, 'users', this.auth.currentUser.uid), {
         uid: this.auth.currentUser.uid,
+        name: uniqueUsername,
         timesPlayed: 0,
         bestTime: 0,
         totalNumberOfWordsSolved: 0,
@@ -1131,8 +1142,8 @@ this.gameResults.active = true;
       this.gameResults.timesPlayed += 1;
     } else this.gameResults.timesPlayed = 1;
 
-    //Only see if user made it into todays top ten if he is logged in
-    if(this.auth.currentUser.email != null) await this.checkIfTop10();
+    // Only see if user made it into todays top ten if they have a displayName
+    if(this.auth.currentUser.displayName != null) await this.checkIfTop10();
 
     this.figureStats().then(() => {
       this.goToCareer();
