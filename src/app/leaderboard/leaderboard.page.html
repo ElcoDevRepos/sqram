@@ -29,8 +29,8 @@
         
       </ion-button>
     </div>
-    <ion-card id="leaderboard-container" *ngIf="activeBoard === 'perfects'" style="width: 95%">
-      <ion-row>
+    <ion-card class="leaderboard-container" *ngIf="activeBoard === 'perfects'" style="width: 95%">
+      <ion-row style="margin-bottom: 8px;">
         <ion-col size="2">
           RANK
         </ion-col>
@@ -59,40 +59,40 @@
         </ion-col>
       </ion-row>
     </ion-card>
-    <ion-card id="leaderboard-container" *ngIf="activeBoard === 'tens'" style="width: 95%">
-      <ion-row>
-        <ion-col>
+    <ion-card class="leaderboard-container" *ngIf="activeBoard === 'tens'" style="width: 95%">
+      <ion-row style="margin-bottom: 8px;">
+        <ion-col size="2">
           RANK
         </ion-col>
-        <ion-col>
+        <ion-col size="4">
           PLAYER
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           TENS
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           COMP%
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           TTC
         </ion-col>
       </ion-row>
       <ion-row *ngFor="let player of friends; let i = index" [ngClass]="{'isYou': player.uid === auth.currentUser.uid}">
-        <ion-col>
+        <ion-col size="2">
           {{i + 1}}
         </ion-col>
         <ion-col style="white-space: nowrap;
        overflow: hidden;
-       text-overflow: ellipsis;">
+       text-overflow: ellipsis;" size="4">
           {{player.name || 0}}
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           {{player.stats.tens || 0 }}
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           {{player.stats.completionRate || 0 | number:'1.1-1'}}%
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           {{player.stats.timeToComplete || 0 | number:'1.1-1'}}s
         </ion-col>
       </ion-row>
@@ -102,38 +102,38 @@
     <div class="horiz-line" ></div>
     <span class="top-100-title" >Top 100 Players</span>
 
-    <ion-card class="top-100-card">
-      <ion-row>
-        <ion-col>
+    <ion-card class="leaderboard-container" style="width: 95%">
+      <ion-row style="margin-bottom: 8px;">
+        <ion-col size="2"> 
           RANK
         </ion-col>
-        <ion-col>
+        <ion-col size="4">
           PLAYER
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           TENS
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           COMP%
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           TTC
         </ion-col>
       </ion-row>
-      <ion-row class="top-100" *ngFor="let player of top100; let i = index"> <!--ADD ngFor HERE-->
-        <ion-col>
+      <ion-row class="top-100" *ngFor="let player of top100; let i = index" [ngClass]="{'isYou': player.uid === auth.currentUser.uid}">
+        <ion-col size="2">
           {{ i + 1 }}
         </ion-col>
-        <ion-col class="player-name">
+        <ion-col size="4">
           {{ player.name }}
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           {{ player.score }}
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           {{ player.compRate }}
         </ion-col>
-        <ion-col>
+        <ion-col size="2">
           {{ player.ttc }}
         </ion-col>
       </ion-row>

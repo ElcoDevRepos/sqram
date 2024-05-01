@@ -330,7 +330,6 @@ button {
 
 .todays-top-10 ion-col {
   font-weight: bold;
-  color: black;
 }
 
 .todays-top-10 .player-name:hover {
@@ -352,4 +351,8 @@ button {
 .login-link {
   cursor: pointer;
   border-bottom: 1px solid;
+}
+
+.isYou {
+  color: #7b16b5;
 }
