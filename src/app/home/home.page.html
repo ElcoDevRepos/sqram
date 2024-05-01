@@ -95,6 +95,7 @@
           <ion-icon name="heart" style="color: #7b16b5" (click)='openDonate()' id="donate-icon"></ion-icon>
         </ion-col>
       </ion-row>
+      <span class="player-name" *ngIf="!auth.currentUser.email">Player: <span style="color: #7b16b5;">{{auth.currentUser.displayName}}</span></span>
       <span id="today">Sqram #{{puzzleNum}}</span>
       <span id="num-solved"
         *ngIf="words.length > 0 && secondsPerWord.length > 0 && haventPlayedToday() && isStateToday()">{{getStatus()}}</span>
