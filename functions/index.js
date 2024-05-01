@@ -103,7 +103,7 @@ async function setUsersActiveToFalse() {
     console.log('All active users active flags has been set to false.');
 }
 
-exports.resetStats = functions.pubsub.schedule("0 19 * * *").timeZone("America/Chicago").onRun(async (context) => {
+exports.resetStats = functions.https.onRequest(async (req, res) => {
     let usersCol = await db.collection('users').get();
     let promises = [];
     usersCol.forEach((doc) => {
@@ -132,7 +132,6 @@ exports.resetStats = functions.pubsub.schedule("0 19 * * *").timeZone("America/C
 
     return Promise.all(promises);
 });
-
 
 exports.eraseInactiveAccounts = functions.pubsub.schedule("0 0 1 */1 *").timeZone("America/Chicago").onRun(async (context) => {
     function calculateDaysBetweenDates(date1, date2) {
