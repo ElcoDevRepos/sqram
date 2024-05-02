@@ -80,6 +80,7 @@ export class HomePage {
   letterRowComponents: Array<ScrambleWordLetterComponent> = [];
   hintUsedOnLastLetter = false;
   todaysTop10: {
+    uid: string,
     name: string,
     score: string,
     ttc: string,
@@ -88,7 +89,7 @@ export class HomePage {
   authenticated : boolean = false;
 
 
-  constructor(private alertCtrl: AlertController, private firestore: Firestore, private auth: Auth, private modalCtrl: ModalController, private menu: MenuController,
+  constructor(private alertCtrl: AlertController, private firestore: Firestore, public auth: Auth, private modalCtrl: ModalController, private menu: MenuController,
     private router: Router, private platform: Platform, private toastCtrl: ToastController, private statsService: StatsService
   ) {
 

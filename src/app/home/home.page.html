@@ -95,6 +95,7 @@
           <ion-icon name="heart" style="color: #7b16b5" (click)='openDonate()' id="donate-icon"></ion-icon>
         </ion-col>
       </ion-row>
+      <span class="player-name" *ngIf="!auth.currentUser.email">Player: <span style="color: #7b16b5;">{{auth.currentUser.displayName}}</span></span>
       <span id="today">Sqram #{{puzzleNum}}</span>
       <span id="num-solved"
         *ngIf="words.length > 0 && secondsPerWord.length > 0 && haventPlayedToday() && isStateToday()">{{getStatus()}}</span>
@@ -170,7 +171,7 @@
     <span id="today" *ngIf="haventPlayedToday()">Today's Top 10</span>
 
     <ion-card class="todays-top-10-card" *ngIf="haventPlayedToday()">
-      <ion-row>
+      <ion-row class="todays-top-10">
         <ion-col size="5">
           PLAYER
         </ion-col>
@@ -184,7 +185,7 @@
           SPW
         </ion-col>
       </ion-row>
-      <ion-row class="todays-top-10" *ngFor="let player of todaysTop10;" (click)="addTop10Friend(player)"> <!--ADD ngFor HERE-->
+      <ion-row class="todays-top-10" *ngFor="let player of todaysTop10;" (click)="addTop10Friend(player)" [ngClass]="{'isYou': player.uid === auth.currentUser.uid}"> <!--ADD ngFor HERE-->
         <ion-col size="5" class="player-name">
           {{ player.name }}
         </ion-col>

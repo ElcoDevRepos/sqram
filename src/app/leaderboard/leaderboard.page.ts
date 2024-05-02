@@ -191,6 +191,7 @@ export class LeaderboardPage implements OnInit {
     const doc = await getDocs(q);
     doc.forEach(user => {
       top100.push({
+        "uid": user.data().uid,
         "name": user.data().name || 'Anonymous',
         "score": user.data().stats.tens,
         "compRate": user.data().stats.completionRate,
