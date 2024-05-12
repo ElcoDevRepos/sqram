@@ -1,6 +1,26 @@
 <ion-content>
+  <div id="logo-container">
+    <img id="sqram-s" src="assets\icons\icon-192x192.png" alt="Sqram S">
+  </div>
+
   <div id="game-screen">
-    <span id="title-two">Create Account</span>
+    <span id="title-two">Create a Free Account or Log In to see your stats and how you rank against other players!</span>
+  </div>
+
+  <ion-list>
+    <ion-item>
+      <ion-input label="Email input" type="email" placeholder="Email" [(ngModel)]="email"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input label="Password input" type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input label="Text input" placeholder="Username" [(ngModel)]="username"></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <div id="close">
+    <ion-button (click)="claim()">Create</ion-button>
   </div>
   <div id="close">
     <img src="../../../assets/images/Close_Icon.svg" (click)="close()" width="75px"/>
