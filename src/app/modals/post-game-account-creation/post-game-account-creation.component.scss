@@ -1,0 +1,42 @@
+#logo-container {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+}
+
+#sqram-s {
+    height: 48px;
+    width: 48px;
+}
+
+#title-two {
+    margin: 32px 12px 0px 12px;
+    font-size: 20px;
+    padding-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#game-screen {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  #close {
+    text-align: center;
+      margin-top: 10px;
+  }
+
+  #close:hover {
+    transform: scale(1.1);
+  }
+
+  ion-content {
+    --background: white;
+  }
+
+  ion-button {
+    --background: #7B16B5;
+    font-size: 18px;
+  }

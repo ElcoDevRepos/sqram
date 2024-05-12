@@ -14,6 +14,7 @@ import { CumulatePipe } from '../pipes/cumulate.pipe';
 import { CareerstatsComponent } from '../modals/careerstats/careerstats.component';
 import { AdsenseModule } from 'ng2-adsense';
 import { KofiBtnComponent } from '../components/kofi-btn/kofi-btn.component';
+import { PostGameAccountCreationComponent } from '../modals/post-game-account-creation/post-game-account-creation.component';
 
 
 @NgModule({
@@ -27,6 +28,6 @@ import { KofiBtnComponent } from '../components/kofi-btn/kofi-btn.component';
     })
   ],
   declarations: [HomePage, FinalWordLetterComponent, ScrambleWordLetterComponent, ProgressIndicatorComponent,
-     PipesPipe, AveragePipe, CumulatePipe, CareerstatsComponent, KofiBtnComponent]
+     PipesPipe, AveragePipe, CumulatePipe, CareerstatsComponent, KofiBtnComponent, PostGameAccountCreationComponent]
 })
 export class HomePageModule {}
