@@ -19,6 +19,7 @@ import { Clipboard } from '@capacitor/clipboard';
 import { updateProfile } from '@firebase/auth';
 import { StatsService } from '../services/stats.service';
 import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
+import { PostGameAccountCreationComponent } from '../modals/post-game-account-creation/post-game-account-creation.component';
 
 dayjs.extend(utc);
 @Component({
@@ -563,6 +564,15 @@ this.gameResults.active = true;
         serverDate: this.serverDate,
         gameResults: this.gameResults
       }
+    });
+
+    await modal.present();
+  }
+
+  // Prompts anonymous users to create an account after the game
+  async goToPostGameAccountCreation() {
+    let modal = await this.modalCtrl.create({
+      component: PostGameAccountCreationComponent,
     });
 
     await modal.present();
@@ -1147,11 +1157,17 @@ this.gameResults.active = true;
       this.gameResults.timesPlayed += 1;
     } else this.gameResults.timesPlayed = 1;
 
-    // Only see if user made it into todays top ten if they have a displayName
-    if(this.auth.currentUser.displayName != null) await this.checkIfTop10();
+    // See if user made it into todays top ten
+    await this.checkIfTop10();
 
     this.figureStats().then(() => {
-      this.goToCareer();
+      
+      // Prompt anonymous users to create an account after the game
+      if(this.auth.currentUser.email == null) {
+        this.goToPostGameAccountCreation();
+      }
+      else this.goToCareer();
+
       updateDoc(doc(this.firestore, "users", this.gameResults.uid), {
         active: this.gameResults.active,
         bestTime: this.gameResults.bestTime,
