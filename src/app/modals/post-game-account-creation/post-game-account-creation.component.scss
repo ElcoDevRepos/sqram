@@ -1,0 +1,101 @@
+#menu-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+
+    #heart-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-size: 35px;
+    }
+
+    #menu-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 35px;
+    }
+}
+
+#title {
+  padding-bottom: 15px;
+  width: 120px;
+  padding-top: 15px;
+}
+#title:hover {
+  transform: scale(1.1);
+}
+
+#title-two {
+    font-size: 20px;
+    padding-bottom: 15px;
+    font-weight: bold;
+}
+
+#game-screen {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  #stats-box {
+      border: 1px solid black;
+      margin-left: 10px;
+      margin-right: 10px;
+      #stat {
+        text-align: center;
+        .number {
+            font-size: 25px;
+            font-weight: bold;
+        }
+        .label {
+          font-size: 14px;
+        }
+      }
+  }
+
+  #stats-break {
+    width: 100%;
+    text-align: center;
+    margin-top: 50px;
+    padding-left: 15%;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .stats-title {
+    text-align: start;
+  }
+
+  #next-game {
+      margin-top: 25px;
+    text-align: center;
+    div {
+      font-size: 25px;
+    }
+  }
+
+  #close {
+    text-align: center;
+      margin-top: 10px;
+  }
+
+  #close:hover {
+    transform: scale(1.1);
+  }
+
+  #donate-icon:before,
+  #flag-icon:before,
+  #career-icon:before,
+  #menu-icon:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  ion-content {
+    --background: white;
+  }
