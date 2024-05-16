@@ -11,6 +11,36 @@ import * as utc from 'dayjs/plugin/utc';
 import { AlertController, ItemReorderEventDetail } from '@ionic/angular';
 dayjs.extend(utc);
 
+const DAILY_WORD_LIMITS = [
+  {
+    letterCount: 3,
+    max: 1,
+    current: 0
+  },
+  {
+    letterCount: 4,
+    max: 1,
+    current: 0
+  },
+  {
+    letterCount: 5,
+    max: 2,
+    current: 0
+  },
+  {
+    letterCount: 6,
+    max: 3,
+    current: 0
+  },
+  {
+    letterCount: 7,
+    max: 3,
+    current: 0
+  }
+];
+const DAILY_WORD_MAX = DAILY_WORD_LIMITS
+    .reduce((acc, curr) => acc + curr.max, 0);
+
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.page.html',
@@ -29,6 +59,9 @@ export class AdminPage implements OnInit {
   statWords: Array<any> = [];
   activeStats;
   activeGames;
+
+  dailyWordLimits = DAILY_WORD_LIMITS;
+  dailyWordMax = DAILY_WORD_MAX;
   constructor(private auth: Auth, private firestore: Firestore, private alertCtrl: AlertController) { }
 
   ngOnInit() {
@@ -39,6 +72,7 @@ export class AdminPage implements OnInit {
 
   async getWords() {
     this.words = [];
+    this.resetDailyWordCounts();
     let ref = collection(
       this.firestore,
       'words',
@@ -59,14 +93,20 @@ export class AdminPage implements OnInit {
         this.activeDoc = d.id;
         d.data().words.forEach((w) => {
           words.push(w);
+          // Update the daily word limits
+          this.dailyWordLimits.forEach((limit) => {
+            if (w.text.length === limit.letterCount) {
+              limit.current++;
+            }
+          });
         });
         words.sort((a, b) => {
-          if (a['index'] > b['index']) {    
-            return 1;    
-          } else if (a['index'] < b['index']) {    
-              return -1;    
-          }    
-          return 0; 
+          if (a['index'] > b['index']) {
+            return 1;
+          } else if (a['index'] < b['index']) {
+              return -1;
+          }
+          return 0;
         })
         this.words = words;
       })
@@ -117,7 +157,7 @@ export class AdminPage implements OnInit {
 
   calculateStats() {
     console.log(this.words);
-    
+
   }
 
   async login() {
@@ -130,11 +170,28 @@ export class AdminPage implements OnInit {
   }
 
   isValidWord() {
+    // Don't add word of length n if we already
+    // have the max of length n words
+    const wordLength = this.word.length;
+    for (const wordLimit of this.dailyWordLimits) {
+      if (wordLength !== wordLimit.letterCount) {
+        continue;
+      }
+      if (wordLimit.current >= wordLimit.max) {
+        const alert = this.alertCtrl.create({
+          header: 'Error',
+          message: `You can only add ${wordLimit.max} ${wordLength}-letter words per day.`,
+          buttons: ['OK']
+        });
+        alert.then(a => a.present());
+        return false;
+      }
+    }
     return true;
   }
   async submit() {
-    if (!this.isValidWord()) return
-    
+    if (!this.isValidWord()) return;
+
     if (this.activeDoc) {
       let ref = doc(
         this.firestore,
@@ -147,10 +204,10 @@ export class AdminPage implements OnInit {
         text: this.word,
         hint: this.hint
       });
-  
+
       await updateDoc(ref, {
         words: temp
-      })
+      });
     }
     this.word = '';
     this.hint = '';
@@ -199,7 +256,7 @@ export class AdminPage implements OnInit {
 
     await updateDoc(ref, {
       words: temp
-    })
+    });
 
     this.getWords();
   }
@@ -222,7 +279,7 @@ export class AdminPage implements OnInit {
               'words',
               this.activeDoc
             );
-        
+
             await updateDoc(ref, {
               words: temp
             })
@@ -249,6 +306,12 @@ export class AdminPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  resetDailyWordCounts() {
+    this.dailyWordLimits.forEach((limit) => {
+      limit.current = 0;
+    });
   }
 }
 

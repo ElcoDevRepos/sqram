@@ -5,9 +5,6 @@
     margin-top: 125px;
 }
 
-
-
-
 .login-btn {
     display: flex;
     flex-direction: row;
@@ -23,12 +20,22 @@
     background: white;
 }
 
+.limit-flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.limit-flex p {
+    font-weight: 500;
+    font-size: 24px;
+}
+
 @media (max-width: 900px) {
     .words-container {
-     display: flex;
+        display: flex;
         flex-direction: column;
     }
-    .word-card, .picker-card {
+    .picker-card, .word-card {
         display: block;
         margin: auto;
         width: 75%;
@@ -37,10 +44,10 @@
 }
 @media (min-width: 901px) {
     .words-container {
-     display: flex;
+        display: flex;
         flex-direction: row;
     }
-    .word-card, .picker-card {
+    .word-card, .left-words-container {
         display: block;
         margin: auto;
         width: 45%;
@@ -51,4 +58,4 @@ ion-icon {
     cursor: pointer;
     font-size: 20px;
 }
-  
+

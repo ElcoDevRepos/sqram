@@ -31,28 +31,51 @@
     </ion-segment-button>
   </ion-segment>
   <div class="words-container" *ngIf="view === 'words'">
-    <ion-card *ngIf="loggedIn" class="picker-card">
-      <ion-card-header>
-        <ion-card-subtitle>
-          Add Some Words
-        </ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-datetime presentation="date" [(ngModel)]="chosenDate" class="datepicker" (ionChange)="dateChanged()">
-        </ion-datetime>
-        <ion-item>
-          <ion-label position="floating">Word</ion-label>
-          <ion-input [(ngModel)]="word" type="text" maxlength="7"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">Hint</ion-label>
-          <ion-input [(ngModel)]="hint" type="text" maxlength="25"></ion-input>
-        </ion-item>
-        <div class="login-btn">
-          <ion-button (click)="submit()">Submit</ion-button>
-        </div>
-      </ion-card-content>
-    </ion-card>
+    <div class="left-words-container">
+      <ion-card *ngIf="loggedIn" class="picker-card">
+        <ion-card-header>
+          <ion-card-subtitle>
+            Add Some Words
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-datetime presentation="date" [(ngModel)]="chosenDate" class="datepicker" (ionChange)="dateChanged()">
+          </ion-datetime>
+          <ion-item>
+            <ion-label position="floating">Word</ion-label>
+            <ion-input [(ngModel)]="word" type="text" maxlength="7"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Hint</ion-label>
+            <ion-input [(ngModel)]="hint" type="text" maxlength="25"></ion-input>
+          </ion-item>
+          <div class="login-btn">
+            <ion-button (click)="submit()">Submit</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card *ngIf="loggedIn" class="picker-card">
+        <ion-card-content>
+          <ion-list>
+            <ion-label *ngFor="let wordLimit of dailyWordLimits">
+              <div class="limit-flex"
+                [style.color]="wordLimit.current == wordLimit.max ? '#00FA9A' : 'black'">
+                <p>{{ wordLimit.letterCount }}-Letter Word:</p>
+                <p>{{ wordLimit.current }}/{{ wordLimit.max }}</p>
+              </div>
+            </ion-label>
+            <ion-label>
+              <div class="limit-flex"
+                [style.color]="words.length == dailyWordMax ? '#00FA9A' : '#0f0f0f'">
+                <p>Total Words:</p>
+                <p>{{ words.length }}/{{ dailyWordMax }}</p>
+              </div>
+            </ion-label>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </div>
 
     <ion-card *ngIf="loggedIn" class="word-card">
       <ion-card-header>
@@ -142,4 +165,4 @@
       </ion-card-content>
     </ion-card>
   </div>
-  
+
