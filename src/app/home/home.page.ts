@@ -135,7 +135,7 @@ export class HomePage {
     let dbUser = await getDoc(doc(this.firestore, "users", this.auth.currentUser.uid));
     if (dbUser.exists()) {
       this.gameResults = dbUser.data() as GameStats;
-    } 
+    }
     else {
       // Create a query to search for documents with a matching email
       const ref = collection(this.firestore, 'pending_reward');
@@ -443,7 +443,7 @@ export class HomePage {
 
       this.menu.close();
       await alertPopup.present();
-      
+
     } else {
 this.gameResults.active = true;
               this.gameResults.lastPlayed = this.serverDate;
@@ -691,7 +691,7 @@ this.gameResults.active = true;
               break;
             }
           }
-          
+
           else if(score == 'PERFECT!' && top10Score[i] != 'PERFECT!') {
             top10UID.splice(i, 0, this.auth.currentUser.uid);
             top10Score.splice(i, 0, score);
@@ -768,7 +768,7 @@ this.gameResults.active = true;
 
         //Get name from uid
         const uid : string = data.todays_top_10[i].uid;
-        let name = ''; 
+        let name = '';
         const userDoc = await getDoc(doc(this.firestore, "users", uid));
         if (userDoc.exists) {
         const userData = userDoc.data();
@@ -879,47 +879,67 @@ this.gameResults.active = true;
   }
 
   randomLetterHint() {
-    let properIndexes = [];
+    /** Changes from previous version:
+      * Instead of choosing a random letter not played, pick
+      * any letter.
+      */
+    const activeWord = this.words[this.activeWord].text;
+    // Choose an index that is not locked
+    // Could this spin forever? I hope not
+    let index;
+    do {
+      index = Math.floor(Math.random() *
+                           activeWord.length);
+    } while (this.lockedIndexes.includes(index));
+
+    const letterLower = activeWord[index].toLowerCase();
+    let foundInLetterArray = false;
+
+    // Check if selected letter is in letter array
     for (let i = 0; i < this.letterArray.length; i++) {
-      if (this.letterArray[i] !== '') {
-        properIndexes.push(i);
-      }
-    }
-
-    let index = Math.floor(Math.random() * properIndexes.length);
-
-    var randomLetter = this.letterArray[properIndexes[index]];
-    if (randomLetter === '') {
-      this.randomLetterHint();
-      return;
-    }
-
-
-    this.letterArray.splice(properIndexes[index], 1, '');
-    let foundIndex = 0;
-    for (let i = 0; i < this.words[this.activeWord].text.length; i++) {
-      if (this.words[this.activeWord].text[i].toLowerCase() === randomLetter && this.finalWord[i] !== randomLetter) {
-        if (this.finalWord[i] !== '') {
-          this.moveLetterBack(this.finalWord[i], i);
+      if (this.letterArray[i] === letterLower) {
+        // Found letter, remove from array, move
+        // letter back to letter array, and set
+        // correct letter in finalWord
+        this.letterArray.splice(i, 1, '');
+        if (this.finalWord[index] !== '') {
+          this.moveLetterBack(this.finalWord[index], index);
         }
-        foundIndex = i;
+        foundInLetterArray = true;
+        this.finalWord[index] = letterLower;
         break;
       }
     }
-    this.finalWord[foundIndex] = randomLetter;
+    // Letter must be from finalWord
+    if (!foundInLetterArray) {
+      // Move the letter back if exists and not correct letter
+      if (this.finalWord[index] !== '' &&
+         this.finalWord[index] !== letterLower) {
+        this.moveLetterBack(this.finalWord[index], index);
+      }
+      // Make sure letter is not already in finalWord
+      for (let i = 0; i < this.finalWord.length; i++) {
+        if (this.finalWord[i] === letterLower &&
+           !this.lockedIndexes.includes(i)) {
+          this.finalWord.splice(i, 1, '');
+          break;
+        }
+      }
+      this.finalWord[index] = letterLower;
+    }
 
     try {
       if (this.finalWord.includes('')) {
         setTimeout(() => {
-          this.finalRowComponents[foundIndex].startExpand();
-        }, 100)
+          this.finalRowComponents[index].startExpand();
+        }, 100);
       }
     } catch (error) {
       console.log(error);
     }
 
     if (!this.finalWord.includes('')) this.hintUsedOnLastLetter = true;
-    this.lockedIndexes.push(foundIndex);
+    this.lockedIndexes.push(index);
     if (!Array.isArray(this.powerupsUsed[this.activeWord])) this.powerupsUsed[this.activeWord] = [];
     if (!this.powerupsUsed[this.activeWord].includes('rlh')) this.powerupsUsed[this.activeWord].push('rlh');
     this.gameResults.hintsUsed = this.gameResults.hintsUsed ? this.gameResults.hintsUsed += 1 : 1;
@@ -1161,7 +1181,7 @@ this.gameResults.active = true;
     await this.checkIfTop10();
 
     this.figureStats().then(() => {
-      
+
       // Prompt anonymous users to create an account after the game
       if(this.auth.currentUser.email == null) {
         this.goToPostGameAccountCreation();
@@ -1295,7 +1315,7 @@ this.gameResults.active = true;
       }
       /**
        * Need to calculate this data and pass it
-       * 
+       *
        * today's game date
        * isPerfect
        * numSolved (x/10)
@@ -1312,7 +1332,7 @@ this.gameResults.active = true;
       }
 
       let isTen = !this.solvedWords.includes(undefined) && !this.solvedWords.includes(null) && this.secondsPerWord.length === this.words.length
-  
+
       total = parseFloat((total / 1000).toFixed(1));
 
       statsObj.today = dayjs().utc().format('MM/DD/YY');
