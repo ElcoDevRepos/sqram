@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Auth, signOut, EmailAuthProvider, linkWithCredential, signInWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
+import { Auth, signOut, EmailAuthProvider, linkWithCredential, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from '@angular/fire/auth';
 import { updateDoc, doc, Firestore, collection, getDocs, query, where } from '@angular/fire/firestore';
 import { AlertController, MenuController, ToastController } from '@ionic/angular';
 
@@ -101,6 +101,36 @@ export class MenuComponent implements OnInit {
         {
           type: 'password',
           placeholder: 'Password',
+        },
+      ],
+    });
+
+    this.menu.close();
+    await alertPopup.present();
+
+  }
+
+  async forgotPassword() {
+    const alertPopup = await this.alertCtrl.create({
+      header: 'Please enter your email',
+      buttons: [
+        {
+          text: 'OK',
+          handler: (d) => {
+            const msg = 'If this user exists, an email will be sent to reset the password.';
+            sendPasswordResetEmail(this.auth, d[0])
+              // Could say if email exists or not, but exposes information
+              .finally(() => {
+              this.showToast(msg);
+            });
+          },
+          role: 'ok'
+        }
+      ],
+      inputs: [
+        {
+          type: 'email',
+          placeholder: 'Email',
         },
       ],
     });

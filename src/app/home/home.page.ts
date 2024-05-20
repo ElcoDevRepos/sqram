@@ -406,55 +406,15 @@ export class HomePage {
   }
 
   async startGame() {
+    this.gameResults.active = true;
+    this.gameResults.lastPlayed = this.serverDate;
 
-    if (this.auth.currentUser.email === null) {
-      const alertPopup = await this.alertCtrl.create({
-        header: 'Log In or Create an Account',
-        subHeader: 'Log In or create an account to see how you rank against other players and save your stats wherever you Sqram! ',
-        buttons: [
-          {
-            text: 'Create Account',
-            handler: (d) => {
-              this.claim()
-            }
-          },
-          {
-            text: 'Log In',
-            handler: (d) => {
-              this.login()
-            }
-          },
-          {
-            text: 'Play Anonymous',
-            handler: async (d) => {
-              this.gameResults.active = true;
-              this.gameResults.lastPlayed = this.serverDate;
+    await updateDoc(doc(this.firestore, 'users', this.gameResults.uid), {
+      active: true,
+      lastPlayed: this.gameResults.lastPlayed
+    });
 
-              await updateDoc(doc(this.firestore, 'users', this.gameResults.uid), {
-                active: true,
-                lastPlayed: this.gameResults.lastPlayed
-              });
-
-              this.startTimers();
-            }
-          }
-        ],
-      });
-
-      this.menu.close();
-      await alertPopup.present();
-
-    } else {
-this.gameResults.active = true;
-              this.gameResults.lastPlayed = this.serverDate;
-
-              await updateDoc(doc(this.firestore, 'users', this.gameResults.uid), {
-                active: true,
-                lastPlayed: this.gameResults.lastPlayed
-              });
-
-              this.startTimers();
-}
+    this.startTimers();
   }
 
   async checkSolution(skipPush) {
@@ -991,7 +951,6 @@ this.gameResults.active = true;
         try {
           this.finalRowComponents[foundIndex].startExpand();
         } catch (error) {
-          console.log(error);
         }
       }, 100);
     }

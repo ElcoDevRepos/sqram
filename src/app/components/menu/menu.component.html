@@ -7,6 +7,7 @@
       <ion-item (click)="claim()" *ngIf="!authenticated" detail button>Create Account</ion-item>
       <ion-item (click)="follow()" detail button>Follow</ion-item>
       <ion-item (click)="login()" *ngIf="!authenticated" detail button>Log In</ion-item>
+      <ion-item (click)="forgotPassword()" *ngIf="!authenticated" detail button>Forgot Password</ion-item>
       <ion-item (click)="logout()" *ngIf="authenticated" detail button>Logout</ion-item>
     </ion-list>
 
